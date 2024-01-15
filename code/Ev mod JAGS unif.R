@@ -8,17 +8,31 @@ model {
   
   rh ~ dunif(range.rh[1], range.rh[2])
   
-  d18Oi ~ dunif(range.d18Oi[1], range.d18Oi[2])
-  
-  dDi ~ dunif(range.dDi[1], range.dDi[2])
-  
-  d18Op ~ dunif(range.d18Op[1], range.d18Op[2])
-  
-  dDp ~ dunif(range.dDp[1], range.dDp[2])
+  # dDp ~ dunif(range.dDp[1], range.dDp[2])
   
   k ~ dunif(range.k[1], range.k[2])
   
   x ~ dunif(range.x[1], range.x[2])
+  
+  # uninformative priors for the precision term of d18Op
+  pre.d18Oi ~ dgamma(1, 1)
+  
+  pre.dDi = pre.d18Oi / 64 #the precision of dD should be 64 times lower than d18O
+  
+  # T() truncated at upper and lower limits
+  d18Oi ~ dnorm(mean.d18Oi, pre.d18Oi) T(-5 ,7)
+  
+  # meteoric source, so d18O and dD should fall along the GMWL
+  # T() truncated at upper and lower limits
+  dDi ~ dnorm(d18Oi * 8 + 10, pre.dDi) T(-30 ,40)
+  
+  # precip mean and sd is from OIPC
+  # Estimates for latitude 3.496°, longitude 36.0407°, altitude 365 m
+  d18Op ~ dnorm(mean.d18Op, 1/sd.d18Op^2)
+  
+  dDp ~ dnorm(mean.dDp, 1/sd.dDp^2)
+  
+  # start model calculation
 
   # Celsius to Kelvin conversion
   TK = TC + 273.15
@@ -59,22 +73,30 @@ model {
   # the line should go through these two points
   
   # calculate evaporative slope
-  sl = (dDL - dDi) / (d18OL - d18Oi)
+  # sl = (dDv - dDL) / (d18Ov - d18OL)
+  
+  sl = (dstarD - dDi) / (dstar18O - d18Oi)
   
   # calculate intercept 
-  intc = dDL - sl * d18OL
+  # intc = dDL - sl * d18OL
+  
+  intc = dstarD - sl * dstar18O
 
   # likelihood calculation
   # this is essentially a Bayesian linear regression
   
+  pre.d18OL ~ dgamma(1, 1) #uninformative priors for the precision term of d18OL
+  
   for (i in 1:N){
     # (1 / variance) = precision, which is the second term in dnorm(,)
     
-    m.d18O[i] ~ dnorm(lw.d18O[i], 1/sd.d18O^2) #use real lake d18O to generate modeled d18O
+    m.d18O[i] ~ dnorm(d18OL, pre.d18OL) #use evaporated lake d18O to generate modeled d18O
     
-    m.dD[i] = intc + sl * m.d18O[i] #use modeled d18O to generate modeled dD
+    m.dD[i] = intc + sl * m.d18O[i] #use slope and intercept to generate modeled dD
     
-    lw.dD[i] ~ dnorm(m.dD[i], 1/sd.dD^2) #final likelyhood evaluation
+    lw.dD[i] ~ dnorm(m.dD[i], 1/sd.dD^2) #likelyhood evaluation of measured dD
+    
+    lw.d18O[i] ~ dnorm(m.d18O[i], 1/sd.d18O^2)#likelyhood evaluation of measured d18O
     
   }
   
