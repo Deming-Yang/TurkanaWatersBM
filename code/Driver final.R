@@ -21,7 +21,9 @@ N <- length(lw.dD) # record the number of lake water measurements
 range.TC <- c(24, 32)
 
 # normally distributed parameters with prior
-mean.d18Oi <- -1 #this is mean inflow isotopes
+# this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
+
+mean.d18Oi <- -1 
 sd.d18Oi <- 1
 
 # this is mean precipitation isotopes, OIPC

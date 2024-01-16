@@ -2,7 +2,7 @@ library(scales)
 library(viridisLite)
 library(ggplot2)
 library(mcmcplots)
-
+library(bayesplot)
 
 # check the density of parameters
 denplot(as.mcmc(post.lw.evp), c("intc", "sl", "k", "x"))
