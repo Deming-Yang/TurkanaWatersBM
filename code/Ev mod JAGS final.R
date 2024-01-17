@@ -2,28 +2,28 @@
 model {
   
   # define parameters and prior distributions
-  # Temperature is an uninformative prior
+
+  # T() truncated at upper and lower limits (to avoid unrealistic values)
   
-  TC ~ dunif(range.TC[1], range.TC[2])
+  # informative prior on rh centering around 0.6, Hopson (1982)
+  rh ~ dbeta(16, 16) T(0.2, 0.95) 
   
   #weakly informative rh, k, and x priors
-  # T() truncated at upper and lower limits (to avoid unrealistic values)
-  # rh ~ dbeta(1.5 ,1.5) T(0.25, 0.95) # symmetric but relatively flat probability curve
+  k ~ dbeta(1.5, 1.5) T(0.1, 0.9)
   
-  rh ~ dbeta(16, 12) T(0.25, 0.95) # informative prior on rh
+  x ~ dbeta(1.5, 1.5) T(0.05, 0.9)
   
-  k ~ dbeta(1.5, 1.5) T(0.05, 0.95)
-  
-  x ~ dbeta(1.5, 1.5) T(0.05, 0.95)
-  
+  # informative prior based on water temperature
+  TC ~ dnorm(mean.TC, 1 / sd.TC^2) 
+    
   # informative prior based on water isotope values of the Omo River
   # (1 / variance) = precision, which is the second term in dnorm(,)
   # the input is also constrained by measured river water values
-  d18Oi ~ dnorm(mean.d18Oi, 1 / sd.d18Oi^2) T(-3.4 ,1.5)
+  d18Oi ~ dnorm(mean.d18Oi, 1 / sd.d18Oi^2) 
   
   # meteoric source, so d18O and dD should fall along the GMWL
   # constrained by measured river water values
-  dDi ~ dnorm(d18Oi * 8 + 10, 1 / (sd.d18Oi * 8)^2) T(-26 ,10)
+  dDi ~ dnorm(d18Oi * 8 + 10, 1 / (sd.d18Oi * 8)^2) 
   
   # informative prior
   # precip means and sds are from OIPC

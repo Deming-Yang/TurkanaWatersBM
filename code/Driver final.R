@@ -18,12 +18,14 @@ lw.d18O <- lakewater$δ18O
 
 N <- length(lw.dD) # record the number of lake water measurements
 
-range.TC <- c(24, 32)
-
 # normally distributed parameters with prior
+# surface temperature data approximated from Thirumalai et al. 2023
+mean.TC <- 28 
+sd.TC <- 2
+
 # this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
 
-mean.d18Oi <- -1 
+mean.d18Oi <- -1
 sd.d18Oi <- 1
 
 # this is mean precipitation isotopes, OIPC
@@ -45,7 +47,7 @@ parameters <- c("TC", "rh", "x", "k", "dDp", "d18Op", "dDi","d18Oi",
                 "intc", "sl")
 
 # input data, including all environmental parameters and measured lake water isotopes
-dat = list( range.TC = range.TC, mean.d18Oi = mean.d18Oi,
+dat = list( mean.TC = mean.TC, sd.TC = sd.TC, mean.d18Oi = mean.d18Oi,
             mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, mean.dDp = mean.dDp,
             sd.dDp = sd.dDp, sd.d18Oi = sd.d18Oi,
             lw.dD = lw.dD, lw.d18O = lw.d18O , N = N, sd.dD = sd.dD, sd.d18O = sd.d18O)
