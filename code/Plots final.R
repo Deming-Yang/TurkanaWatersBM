@@ -49,7 +49,6 @@ post.x <- post.lw.evp.f$BUGSoutput$sims.list$x
 # maximum a posteriori estimate
 sl.map <- map_estimate(post.sl)[[1]]
 
-
 # highest density interval, CI = 0.95
 sl.hdi025 <- hdi(post.sl, ci = 0.95)[[2]]
 sl.hdi975 <- hdi(post.sl, ci = 0.95)[[3]]
@@ -61,9 +60,16 @@ intc.map <- map_estimate(post.intc)[[1]]
 intc.hdi025 <- hdi(post.intc, ci = 0.95)[[2]]
 intc.hdi975 <- hdi(post.intc, ci = 0.95)[[3]]
 
+# maximum a posteriori estimate
+x.map <- map_estimate(post.x)[[1]]
+
+# highest density interval, CI = 0.95
+x.hdi025 <- hdi(post.x, ci = 0.95)[[2]]
+x.hdi975 <- hdi(post.x, ci = 0.95)[[3]]
+
 # cloud plot for simulated sources 
 plot(x = lw.d18O, y = lw.dD, 
-     xlim = c(-30,25), ylim = c(-150,150), 
+     xlim = c(-30,30), ylim = c(-150,200), 
      col= alpha("cyan4", 0.5), pch = 16)
 abline(a = 10, b = 8, lwd = 2)
 
@@ -85,7 +91,7 @@ abline(a = intc.hdi025, b = sl.hdi975, lwd = 1, col = "orange4", lty = 2)
 abline(a = intc.hdi975, b = sl.hdi025, lwd = 1, col = "orange4", lty = 2)
 
 # density plot for the posterior of x
-plot(density(post.x))
+plot(density(post.x), xlim = c(0.1, 0.6))
 abline(v = x.map, lwd = 2)
 abline(v = x.hdi025, lwd = 1.5 , lty = 2)
 abline(v = x.hdi975, lwd = 1.5 , lty = 2)

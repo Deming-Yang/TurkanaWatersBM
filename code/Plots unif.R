@@ -65,6 +65,13 @@ x.map <- map_estimate(post.x)[[1]]
 x.hdi025 <- hdi(post.x, ci = 0.95)[[2]]
 x.hdi975 <- hdi(post.x, ci = 0.95)[[3]]
 
+# maximum a posteriori estimate
+x.map <- map_estimate(post.x)[[1]]
+
+# highest density interval, CI = 0.95
+x.hdi025 <- hdi(post.x, ci = 0.95)[[2]]
+x.hdi975 <- hdi(post.x, ci = 0.95)[[3]]
+
 plot(x = lw.d18O, y = lw.dD, 
      xlim = c(-30,20), ylim = c(-150,100), 
      col= alpha("cyan4", 0.5), pch = 16)
