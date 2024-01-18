@@ -9,9 +9,9 @@ model {
   rh ~ dbeta(16, 16) T(0.2, 0.95) 
   
   #weakly informative rh, k, and x priors
-  k ~ dbeta(1.5, 1.5) T(0.1, 0.9)
+  k ~ dbeta(1.5, 1.5) T(0.05, 0.95)
   
-  x ~ dbeta(1.5, 1.5) T(0.05, 0.9)
+  x ~ dbeta(1.5, 1.5) T(0.05, 0.95)
   
   # informative prior based on water temperature
   TC ~ dnorm(mean.TC, 1 / sd.TC^2) 

@@ -20,8 +20,8 @@ N <- length(lw.dD) # record the number of lake water measurements
 
 # normally distributed parameters with prior
 # surface temperature data approximated from Thirumalai et al. 2023
-mean.TC <- 28 
-sd.TC <- 2
+mean.TC <- 29
+sd.TC <- 1
 
 # this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
 
