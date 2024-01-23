@@ -6,22 +6,24 @@ model {
   # T() truncated at upper and lower limits (to avoid unrealistic values)
   
   # informative prior on rh centering around 0.6, Hopson (1982)
-  rh ~ dbeta(16, 16) T(0.2, 0.95) 
+  rh ~ dbeta(16, 12) T(0.2, 0.95) 
   
   #weakly informative rh, k, and x priors
-  k ~ dbeta(10, 2)
+  k ~ dunif(range.k[1], range.k[2])
   
   x ~ dbeta(1.5, 1.5) T(0.05, 0.95)
   
   # informative prior based on water temperature
   TC ~ dnorm(mean.TC, 1 / sd.TC^2) 
     
-  # uninformative prior based on input water isotope values
+  # informative prior based on water isotope values of the Omo River
+  # (1 / variance) = precision, which is the second term in dnorm(,)
+  # the input is also constrained by measured river water values
+  d18Oi ~ dnorm(mean.d18Oi, 1 / sd.d18Oi^2) 
   
-  d18Oi ~ dunif(range.d18Oi[1], range.d18Oi[2])
-  
-  # uninformative prior based on input water isotope values
-  dDi ~ dunif(range.dDi[1], range.dDi[2])
+  # meteoric source, so d18O and dD should fall along the GMWL
+  # constrained by measured river water values
+  dDi ~ dnorm(d18Oi * 8 + 10, 1 / (sd.d18Oi * 8)^2) 
   
   # informative prior
   # precip means and sds are from OIPC
