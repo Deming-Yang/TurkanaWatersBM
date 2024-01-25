@@ -6,10 +6,10 @@ model {
   # T() truncated at upper and lower limits (to avoid unrealistic values)
   
   # informative prior on rh centering around 0.6, Hopson (1982)
-  rh ~ dbeta(16, 12) T(0.2, 0.95) 
+  rh ~ dbeta(16, 12) T(0.25, 0.95) 
   
   #weakly informative rh, k, and x priors
-  k ~ dbeta(10, 2)
+  k ~ dbeta(10, 1) 
   
   x ~ dbeta(1.5, 1.5) T(0.05, 0.95)
   
@@ -77,13 +77,15 @@ model {
   # likelihood calculation
   # this is essentially a Bayesian linear regression
   
-  pre.d18OL ~ dgamma(1, 1) #uninformative priors for the precision term of d18OL
+  pre.d18OL ~ dgamma(1, 1) #weakly informative priors for the precision term of d18OL
+  
+  pre.dDL ~ dgamma(1, 1) #weakly informative priors for the precision term of d18OL
   
   for (i in 1:N){
     
     m.d18O[i] ~ dnorm(d18OL, pre.d18OL) #use evaporated lake d18O to generate modeled d18O
     
-    m.dD[i] = intc + sl * m.d18O[i] #use slope and intercept to generate modeled dD
+    m.dD[i] ~ dnorm(intc + sl * m.d18O[i], pre.dDL) #use slope and intercept to generate modeled dD
     
     lw.dD[i] ~ dnorm(m.dD[i], 1 / sd.dD^2) #likelihood evaluation of measured dD
     

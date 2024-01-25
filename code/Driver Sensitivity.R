@@ -51,7 +51,7 @@ sd.d18O <- 0.1
 # parameters to monitor
 parameters <- c("TC", "rh", "x", "k", "dDp", "d18Op", "dDi","d18Oi",
                 "eD","e18O", "ekD", "ek18O", "dDA","d18OA", "dstarD", "dstar18O",
-                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", 
+                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", "pre.dDL",
                 "intc", "sl")
 
 # input data, including all environmental parameters and measured lake water isotopes
@@ -117,7 +117,7 @@ sd.d18O <- 0.1
 # parameters to monitor
 parameters <- c("TC", "rh", "x", "k", "dDp", "d18Op", "dDi","d18Oi",
                 "eD","e18O", "ekD", "ek18O", "dDA","d18OA", "dstarD", "dstar18O",
-                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", 
+                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", "pre.dDL",
                 "intc", "sl")
 
 # input data, including all environmental parameters and measured lake water isotopes
@@ -183,7 +183,7 @@ sd.d18O <- 0.1
 # parameters to monitor
 parameters <- c("TC", "rh", "x", "k", "dDp", "d18Op", "dDi","d18Oi",
                 "eD","e18O", "ekD", "ek18O", "dDA","d18OA", "dstarD", "dstar18O",
-                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", 
+                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", "pre.dDL",
                 "intc", "sl")
 
 # input data, including all environmental parameters and measured lake water isotopes
@@ -251,7 +251,7 @@ sd.d18O <- 0.1
 # parameters to monitor
 parameters <- c("TC", "rh", "x", "k", "dDp", "d18Op", "dDi","d18Oi",
                 "eD","e18O", "ekD", "ek18O", "dDA","d18OA", "dstarD", "dstar18O",
-                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", 
+                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", "pre.dDL",
                 "intc", "sl")
 
 # input data, including all environmental parameters and measured lake water isotopes
@@ -316,7 +316,7 @@ sd.d18O <- 0.1
 # parameters to monitor
 parameters <- c("TC", "rh", "x", "k", "dDp", "d18Op", "dDi","d18Oi",
                 "eD","e18O", "ekD", "ek18O", "dDA","d18OA", "dstarD", "dstar18O",
-                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", 
+                "dDv", "d18Ov","mD", "m18O", "pre.d18OL", "pre.dDL",
                 "intc", "sl")
 
 # input data, including all environmental parameters and measured lake water isotopes
