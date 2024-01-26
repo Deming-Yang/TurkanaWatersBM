@@ -21,7 +21,7 @@ N <- length(lw.dD) # record the number of lake water measurements
 
 # normally distributed parameters with prior
 # surface temperature data approximated from Thirumalai et al. 2023
-mean.TC <- 29
+mean.TC <- 28
 sd.TC <- 1
 
 # this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
@@ -57,9 +57,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, mean.d18Oi = mean.d18Oi,
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.R", 
@@ -101,9 +101,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, mean.d18Oi = mean.d18Oi,
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.k = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS k.R",

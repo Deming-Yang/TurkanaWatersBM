@@ -69,7 +69,7 @@ x.hdi975 <- hdi(post.x, ci = 0.95)[[3]]
 
 # cloud plot for simulated sources 
 plot(x = lw.d18O, y = lw.dD, 
-     xlim = c(-30,30), ylim = c(-150,200), 
+     xlim = c(-20,30), ylim = c(-100,150), 
      col= alpha("cyan4", 0.5), pch = 16)
 abline(a = 10, b = 8, lwd = 2)
 

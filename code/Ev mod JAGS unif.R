@@ -87,16 +87,17 @@ model {
   
   pre.d18OL ~ dgamma(1, 1) #uninformative priors for the precision term of d18OL
   
+  pre.dDL ~ dgamma(1, 1) #weakly informative priors for the precision term of d18OL
+  
   for (i in 1:N){
-    # (1 / variance) = precision, which is the second term in dnorm(,)
     
     m.d18O[i] ~ dnorm(d18OL, pre.d18OL) #use evaporated lake d18O to generate modeled d18O
     
-    m.dD[i] = intc + sl * m.d18O[i] #use slope and intercept to generate modeled dD
+    m.dD[i] ~ dnorm(intc + sl * m.d18O[i], pre.dDL) #use slope and intercept to generate modeled dD
     
-    lw.dD[i] ~ dnorm(m.dD[i], 1/sd.dD^2) #likelyhood evaluation of measured dD
+    lw.dD[i] ~ dnorm(m.dD[i], 1 / sd.dD^2) #likelihood evaluation of measured dD
     
-    lw.d18O[i] ~ dnorm(m.d18O[i], 1/sd.d18O^2)#likelyhood evaluation of measured d18O
+    lw.d18O[i] ~ dnorm(m.d18O[i], 1 / sd.d18O^2) #likelihood evaluation of measured d18O
     
   }
   

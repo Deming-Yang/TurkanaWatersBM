@@ -9,7 +9,7 @@ model {
   rh ~ dbeta(16, 12) T(0.25, 0.95) 
   
   #weakly informative rh, k, and x priors
-  k ~ dbeta(10, 1) 
+  k ~ dbeta(15, 1) #forcing k to be close to 1 will force dDi to be higher (deviation from GMWL)
   
   x ~ dbeta(1.5, 1.5) T(0.05, 0.95)
   

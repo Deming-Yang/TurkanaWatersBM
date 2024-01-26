@@ -28,7 +28,7 @@ range.TC <- c(24, 32)
 # other priors are the same as the main model
 
 # surface temperature data approximated from Thirumalai et al. 2023
-mean.TC <- 29
+mean.TC <- 28
 sd.TC <- 1
 
 # this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
@@ -64,9 +64,9 @@ dat = list( range.TC = range.TC, mean.d18Oi = mean.d18Oi,
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS SenTC.R", 
@@ -93,10 +93,15 @@ denplot(as.mcmc(post.lw.evp.senTC))
 ######## Test 2: sensitivity to rh prior ########
 #################################################
 # uniformly distributed rh prior
-range.rh <- c(0.2, 0.9)
+range.rh <- c(0.3, 0.9)
 
 
 # other priors are the same as the main model
+
+# surface temperature data approximated from Thirumalai et al. 2023
+mean.TC <- 28
+sd.TC <- 1
+
 # this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
 
 mean.d18Oi <- -1
@@ -130,9 +135,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, range.rh = range.rh, mean.d18Oi = 
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senrh.R", 
@@ -158,6 +163,10 @@ denplot(as.mcmc(post.lw.evp.senrh))
 ################################################
 ######## Test 3: sensitivity to k prior ########
 ################################################
+# surface temperature data approximated from Thirumalai et al. 2023
+mean.TC <- 28
+sd.TC <- 1
+
 # uniformly distributed k prior
 range.k <- c(0.5, 1)
 
@@ -196,9 +205,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, range.k = range.k, mean.d18Oi = me
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.senk = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senk.R", 
@@ -228,7 +237,7 @@ denplot(as.mcmc(post.lw.evp.senk))
 
 # normally distributed parameters with prior
 # surface temperature data approximated from Thirumalai et al. 2023
-mean.TC <- 29
+mean.TC <- 28
 sd.TC <- 1
 
 # uninformative inflow isotopes 
@@ -263,9 +272,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, range.d18Oi = range.d18Oi, range.d
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.Sen18Oi = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Sen18Oi.R", 
@@ -295,7 +304,7 @@ denplot(as.mcmc(post.lw.evp.Sen18Oi))
 
 # normally distributed parameters with prior
 # surface temperature data approximated from Thirumalai et al. 2023
-mean.TC <- 29
+mean.TC <- 28
 sd.TC <- 1
 
 # this is mean inflow isotopes of Omo River, Rickett and Johnson, 1996
@@ -328,9 +337,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, range.d18Op = range.d18Op, range.d
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 5e6    # 5 million interations
-n.burnin = 2e6  # 2 million burnin
-n.thin = 1000 #record data every 200 iterations, total data points: 15000
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.Sen18Op = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Sen18Op.R", 
