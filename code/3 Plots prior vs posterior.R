@@ -19,7 +19,6 @@ x<-seq(from=0.3,to=1,length.out=1000)
 plot(x, dbeta(x, 10, 1), type = "l", col = "blue", ylim = c(0, 10),
      main="Prior vs Posterior, k", xlab = "k", ylab = "density")
 lines(density(post.lw.evp.f$BUGSoutput$sims.list$k), col = "red")
-legend(24,0.4,c("Prior","Posterior"),lty = c(1,1), col = c("blue", "red"))
 legend(0.3,10,c("Prior","Posterior"),lty = c(1,1), col = c("blue", "red"))
 
 # parameter inflow d18O, d18Oi
