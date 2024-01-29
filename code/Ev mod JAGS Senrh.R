@@ -9,7 +9,7 @@ model {
   rh ~ dunif(range.rh[1], range.rh[2])
   
   #weakly informative rh, k, and x priors
-  k ~ dbeta(10, 2)
+  k ~ dbeta(10, 1)
   
   x ~ dbeta(1.5, 1.5) T(0.05, 0.95)
   

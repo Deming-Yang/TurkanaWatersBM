@@ -86,9 +86,6 @@ post.lw.evp.senTC$BUGSoutput$summary
 # check rhat for convergence: Rhat < 1.01 means ample sampling with good convergence
 post.lw.evp.senTC$BUGSoutput$summary[,8]
 
-# check the density of parameters
-denplot(as.mcmc(post.lw.evp.senTC))
-
 #################################################
 ######## Test 2: sensitivity to rh prior ########
 #################################################
@@ -157,9 +154,6 @@ post.lw.evp.senrh$BUGSoutput$summary
 # check rhat for convergence: Rhat < 1.01 means ample sampling with good convergence
 post.lw.evp.senrh$BUGSoutput$summary[,8]
 
-# check the density of parameters
-denplot(as.mcmc(post.lw.evp.senrh))
-
 ################################################
 ######## Test 3: sensitivity to k prior ########
 ################################################
@@ -227,10 +221,6 @@ post.lw.evp.senk$BUGSoutput$summary
 # check rhat for convergence: Rhat < 1.01 means ample sampling with good convergence
 post.lw.evp.senk$BUGSoutput$summary[,8]
 
-# check the density of parameters
-denplot(as.mcmc(post.lw.evp.senk))
-# yes, x is sensitive to the prior distribution of k, which skews to the left
-
 ##########################################################
 ######## Test 4: sensitivity to d18O inflow prior ########
 ##########################################################
@@ -272,9 +262,9 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC, range.d18Oi = range.d18Oi, range.d
 t1 = proc.time()
 
 set.seed(t1[3])
-n.iter = 1e6    # 1 million interations
-n.burnin = 4e5  # 400 k burnin
-n.thin = 200 #record data every 200 iterations, total data points: 15000
+n.iter = 2e6    # 1 million interations
+n.burnin = 8e5  # 400 k burnin
+n.thin = 400 #record data every 200 iterations, total data points: 15000
 
 #Run it
 post.lw.evp.Sen18Oi = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Sen18Oi.R", 
@@ -293,9 +283,6 @@ post.lw.evp.Sen18Oi$BUGSoutput$summary
 
 # check rhat for convergence: Rhat < 1.01 means ample sampling with good convergence
 post.lw.evp.Sen18Oi$BUGSoutput$summary[,8]
-
-# check the density of parameters
-denplot(as.mcmc(post.lw.evp.Sen18Oi))
 
 
 ##########################################################
@@ -358,6 +345,3 @@ post.lw.evp.Sen18Op$BUGSoutput$summary
 
 # check rhat for convergence: Rhat < 1.01 means ample sampling with good convergence
 post.lw.evp.Sen18Op$BUGSoutput$summary[,8]
-
-# check the density of parameters
-denplot(as.mcmc(post.lw.evp.Sen18Op))
