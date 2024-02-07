@@ -37,16 +37,19 @@ lakewater <- waters |>
     filter(WaterType == "Lake")
 
 # water isotope values as model input
-lw.dD <- lakewater$δD
-lw.d18O <- lakewater$δ18O
+lw.dD <- lakewater$dD
+lw.d18O <- lakewater$d18O
 N <- length(lw.dD) # number of lake water measurements
 ```
 
 # Bayesian model 
 
-## Priors
+_include equations?_
 
-(driver)
+```{r}
+#| label: priors-driver
+source(here("code/1 Driver.R"))
+```
 
 ## Plots
 
