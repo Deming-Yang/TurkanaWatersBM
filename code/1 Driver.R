@@ -58,11 +58,12 @@ parameters <- c("TC", "f.ev", "k", "dDp", "d18Op", "dDi","d18Oi","f","dstarD", "
                 "sl.ev", "intc.ev")
 
 # input data, including all environmental parameters and measured lake water isotopes
-dat = list( mean.TC = mean.TC, sd.TC = sd.TC, mean.d18Oi = mean.d18Oi,
-            mean.dDi = mean.dDi, sd.dDi = sd.dDi,
-            mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, mean.dDp = mean.dDp,
-            sd.dDp = sd.dDp, sd.d18Oi = sd.d18Oi, t = t,
-            lw.dD = lw.dD, lw.d18O = lw.d18O , N = N, sd.dD = sd.dD, sd.d18O = sd.d18O)
+dat = list( mean.TC = mean.TC, sd.TC = sd.TC, 
+            mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+            mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+            mean.dDp = mean.dDp, sd.dDp = sd.dDp,  t = t, N = N, 
+            lw.dD = lw.dD, sd.dD = sd.dD, 
+            lw.d18O = lw.d18O , sd.d18O = sd.d18O)
 
 #Start time
 t1 = proc.time()
