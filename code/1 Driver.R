@@ -80,7 +80,7 @@ post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.
                                            n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.f, file = "out/post.lw.evp.f.RData")
 
@@ -92,6 +92,6 @@ post.lw.evp.f$BUGSoutput$summary
 post.lw.evp.f$BUGSoutput$summary[,8]
 
 # check the density of parameters
-denplot(as.mcmc(post.lw.evp.f), parms =c("TC", "rh.ev","dDi","d18Oi","k",
+denplot(as.mcmc(post.lw.evp.f), parms =c("TC", "rh.ev","dDi","d18Oi","k","dDp","d18Op",
                                           "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", "dDL.ev","d18OL.ev",
                                           "f.ev","sl.ev", "intc.ev"))

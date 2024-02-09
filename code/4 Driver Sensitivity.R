@@ -82,7 +82,7 @@ post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Se
                                            n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.senTC, file = "out/post.lw.evp.senTC.RData")
 
@@ -157,7 +157,7 @@ post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Se
                                                n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.senrh, file = "out/post.lw.evp.senrh.RData")
 
@@ -231,7 +231,7 @@ post.lw.evp.senk = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Sen
                                                n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.senk, file = "out/post.lw.evp.senk.RData")
 
@@ -302,7 +302,7 @@ post.lw.evp.Sen18Oi = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS 
                                            n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.Sen18Oi, file = "out/post.lw.evp.Sen18Oi.RData")
 
@@ -372,7 +372,7 @@ post.lw.evp.Sen18Op = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS 
                                                  n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.Sen18Op, file = "out/post.lw.evp.Sen18Op.RData")
 
@@ -396,7 +396,7 @@ post.lw.evp.Sen18Op$BUGSoutput$summary[,8]
 # along the LEL
 lw.d18O.evap <- lw.d18O + 1 
 
-lw.dD.evap <- lw.d18O.evap * sl.map + intc.map
+lw.dD.evap <- lw.dD + 1 * sl.map # plus 1 * slope
 
 # normally distributed parameters with prior
 # surface temperature data approximated from Thirumalai et al. 2023
@@ -454,7 +454,7 @@ post.lw.evp.Sen.evap = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS
                                                  n.burnin = n.burnin, n.thin = n.thin))
 
 #Time taken
-proc.time() - t1 #~40 mins
+proc.time() - t1 #~10 mins
 
 save(post.lw.evp.Sen.evap, file = "out/post.lw.evp.Sen.evap.RData")
 

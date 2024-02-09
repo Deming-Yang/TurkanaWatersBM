@@ -97,15 +97,6 @@ legend(-10, 60, c("Lake water", "Inflow", "Precipitation",
        col = c("cyan4", "green2", "blue", "magenta2", "orange",
                                         "red", "red4"))
 
-# bivariate density plots
-
-mcmc_hex(as.mcmc(post.lw.evp.mod), pars = c("f.ev", "rh.ev"))
-
-# mcmc_hex(as.mcmc(post.lw.evp.mod), pars = c("f.ev", "k"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.mod), pars = c("k", "rh.ev"))
-
-
 # density plot for the posterior of f
 plot(density(post.f), xlim = c(0, 1), xlab = "f", ylab = "Density",
      main = "Posterior distribution of f.ev")
@@ -113,8 +104,7 @@ abline(v = f.map, lwd = 2)
 abline(v = f.hdi025, lwd = 1.5 , lty = 2)
 abline(v = f.hdi975, lwd = 1.5 , lty = 2)
 
-# plot relative humidity from before mixing to after mixing
 
-plot(density(post.rh.int), xlim = c(0.2, 1), xlab = "rh", ylab = "Density",
-     main = "Posterior distribution of rh", col = "blue")
-lines(density(post.rhev), col = "red")
+# bivariate density plot
+# between f and rh
+mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev"))
