@@ -9,261 +9,178 @@ library(bayesplot)
 ######## Test 1: sensitivity to Temperature prior ########
 ##########################################################
 # check the density of parameters
-denplot(as.mcmc(post.lw.evp.senTC))
-# x is not sensitive to TC prior
+denplot(as.mcmc(post.lw.evp.senTC), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev",
+                 "f.ev","sl.ev", "intc.ev"))
+# f is not sensitive to TC prior
 
-# bivariate density plots
-# mcmc_hex(as.mcmc(post.lw.evp.senTC), pars = c("TC", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.senTC), pars = c("k", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.senTC), pars = c("rh", "x"))
-
-# post.d18Ov <- post.lw.evp.senTC$BUGSoutput$sims.list$d18Ov
-# 
-# post.dDv <- post.lw.evp.senTC$BUGSoutput$sims.list$dDv
-# 
-# post.d18Oi <- post.lw.evp.senTC$BUGSoutput$sims.list$d18Oi
-# 
-# post.dDi <- post.lw.evp.senTC$BUGSoutput$sims.list$dDi
-# 
-# post.d18Op <- post.lw.evp.senTC$BUGSoutput$sims.list$d18Op
-# 
-# post.dDp <- post.lw.evp.senTC$BUGSoutput$sims.list$dDp
-# 
-# post.dstar18O <- post.lw.evp.senTC$BUGSoutput$sims.list$dstar18O
-# 
-# post.dstarD <- post.lw.evp.senTC$BUGSoutput$sims.list$dstarD
-# 
-# post.intc <- post.lw.evp.senTC$BUGSoutput$sims.list$intc
-# 
-# post.sl <- post.lw.evp.senTC$BUGSoutput$sims.list$sl
-
-post.x.TC <- post.lw.evp.senTC$BUGSoutput$sims.list$x
+post.f.TC <- post.lw.evp.senTC$BUGSoutput$sims.list$f.ev
 
 # maximum a posteriori estimate
-x.map.TC <- map_estimate(post.x.TC)[[1]]
+f.map.TC <- map_estimate(post.f.TC)[[1]]
 
 # highest density interval, CI = 0.95
-x.hdi025.TC <- hdi(post.x.TC, ci = 0.95)[[2]]
-x.hdi975.TC <- hdi(post.x.TC, ci = 0.95)[[3]]
+f.hdi025.TC <- hdi(post.f.TC, ci = 0.95)[[2]]
+f.hdi975.TC <- hdi(post.f.TC, ci = 0.95)[[3]]
 
-# cloud plot for simulated sources 
-# plot(x = lw.d18O, y = lw.dD, 
-#      xlim = c(-30,30), ylim = c(-150,200), 
-#      col= alpha("cyan4", 0.5), pch = 16)
-# abline(a = 10, b = 8, lwd = 2)
-# 
-# points(x = post.d18Oi, y = post.dDi, col= alpha("green4", 0.01))
-# 
-# points(x = post.d18Op, y = post.dDp, col= alpha("blue", 0.01))
-# 
-# points(x = post.d18Ov, y = post.dDv, col= alpha("magenta4", 0.01))
-
-# points(x = post.dstar18O, y = post.dstarD, col= alpha("orange", 0.01))
-# 
-# abline(a = intc.map, b = sl.map, lwd = 1.5, col = "orange4")
-# 
-# abline(a = intc.hdi025, b = sl.hdi975, lwd = 1, col = "orange4", lty = 2)
-# 
-# abline(a = intc.hdi975, b = sl.hdi025, lwd = 1, col = "orange4", lty = 2)
 
 #################################################
 ######## Test 2: sensitivity to rh prior ########
 #################################################
 # check the density of parameters
-denplot(as.mcmc(post.lw.evp.senrh))
-#yes, x is sensitive to rh estimate, although both rh and x center around the posteriors
+denplot(as.mcmc(post.lw.evp.senrh), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev",
+                 "f.ev","sl.ev", "intc.ev"))
+#f is not sensitive to rh estimate. both rh and x center around the same posteriors
 
-# bivariate density plots
-# mcmc_hex(as.mcmc(post.lw.evp.senrh), pars = c("TC", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.senrh), pars = c("k", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.senrh), pars = c("rh", "x"))
-
-# post.d18Ov <- post.lw.evp.senrh$BUGSoutput$sims.list$d18Ov
-# 
-# post.dDv <- post.lw.evp.senrh$BUGSoutput$sims.list$dDv
-# 
-# post.d18Oi <- post.lw.evp.senrh$BUGSoutput$sims.list$d18Oi
-# 
-# post.dDi <- post.lw.evp.senrh$BUGSoutput$sims.list$dDi
-# 
-# post.d18Op <- post.lw.evp.senrh$BUGSoutput$sims.list$d18Op
-# 
-# post.dDp <- post.lw.evp.senrh$BUGSoutput$sims.list$dDp
-# 
-# post.dstar18O <- post.lw.evp.senrh$BUGSoutput$sims.list$dstar18O
-# 
-# post.dstarD <- post.lw.evp.senrh$BUGSoutput$sims.list$dstarD
-# 
-# post.intc <- post.lw.evp.senrh$BUGSoutput$sims.list$intc
-# 
-# post.sl <- post.lw.evp.senrh$BUGSoutput$sims.list$sl
-
-post.x.rh <- post.lw.evp.senrh$BUGSoutput$sims.list$x
+post.f.rh <- post.lw.evp.senrh$BUGSoutput$sims.list$f.ev
 
 # maximum a posteriori estimate
-x.map.rh <- map_estimate(post.x.rh)[[1]]
+f.map.rh <- map_estimate(post.f.rh)[[1]]
 
 # highest density interval, CI = 0.95
-x.hdi025.rh <- hdi(post.x.rh, ci = 0.95)[[2]]
-x.hdi975.rh <- hdi(post.x.rh, ci = 0.95)[[3]]
-
-# cloud plot for simulated sources 
-# plot(x = lw.d18O, y = lw.dD, 
-#      xlim = c(-30,30), ylim = c(-150,200), 
-#      col= alpha("cyan4", 0.5), pch = 16)
-# abline(a = 10, b = 8, lwd = 2)
-# 
-# points(x = post.d18Oi, y = post.dDi, col= alpha("green4", 0.01))
-# 
-# points(x = post.d18Op, y = post.dDp, col= alpha("blue", 0.01))
-# 
-# points(x = post.d18Ov, y = post.dDv, col= alpha("magenta4", 0.01))
-
-# points(x = post.dstar18O, y = post.dstarD, col= alpha("orange", 0.01))
-# 
-# abline(a = intc.map, b = sl.map, lwd = 1.5, col = "orange4")
-# 
-# abline(a = intc.hdi025, b = sl.hdi975, lwd = 1, col = "orange4", lty = 2)
-# 
-# abline(a = intc.hdi975, b = sl.hdi025, lwd = 1, col = "orange4", lty = 2)
+f.hdi025.rh <- hdi(post.f.rh, ci = 0.95)[[2]]
+f.hdi975.rh <- hdi(post.f.rh, ci = 0.95)[[3]]
 
 ################################################
 ######## Test 3: sensitivity to k prior ########
 ################################################
 # check the density of parameters
-denplot(as.mcmc(post.lw.evp.senk))
-# yes, x is sensitive to k being skewed towards low values, but k = 0.5 means highly seasonal situations 
+denplot(as.mcmc(post.lw.evp.senk), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev",
+                 "f.ev","sl.ev", "intc.ev"))
+# f is not sensitive to k. the posterior of k is about the same, regardless of the prior
 
-# bivariate density plots
-# mcmc_hex(as.mcmc(post.lw.evp.senk), pars = c("TC", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.senk), pars = c("k", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.senk), pars = c("rh", "x"))
-
-# post.d18Ov <- post.lw.evp.senk$BUGSoutput$sims.list$d18Ov
-# 
-# post.dDv <- post.lw.evp.senk$BUGSoutput$sims.list$dDv
-# 
-# post.d18Oi <- post.lw.evp.senk$BUGSoutput$sims.list$d18Oi
-# 
-# post.dDi <- post.lw.evp.senk$BUGSoutput$sims.list$dDi
-# 
-# post.d18Op <- post.lw.evp.senk$BUGSoutput$sims.list$d18Op
-# 
-# post.dDp <- post.lw.evp.senk$BUGSoutput$sims.list$dDp
-# 
-# post.dstar18O <- post.lw.evp.senk$BUGSoutput$sims.list$dstar18O
-# 
-# post.dstarD <- post.lw.evp.senk$BUGSoutput$sims.list$dstarD
-# 
-# post.intc <- post.lw.evp.senk$BUGSoutput$sims.list$intc
-# 
-# post.sl <- post.lw.evp.senk$BUGSoutput$sims.list$sl
-
-post.x.k <- post.lw.evp.senk$BUGSoutput$sims.list$x
+post.f.k <- post.lw.evp.senk$BUGSoutput$sims.list$f.ev
 
 # maximum a posteriori estimate
-x.map.k <- map_estimate(post.x.k)[[1]]
+f.map.k <- map_estimate(post.f.k)[[1]]
 
 # highest density interval, CI = 0.95
-x.hdi025.k <- hdi(post.x.k, ci = 0.95)[[2]]
-x.hdi975.k <- hdi(post.x.k, ci = 0.95)[[3]]
-
-# cloud plot for simulated sources 
-# plot(x = lw.d18O, y = lw.dD, 
-#      xlim = c(-30,30), ylim = c(-150,200), 
-#      col= alpha("cyan4", 0.5), pch = 16)
-# abline(a = 10, b = 8, lwd = 2)
-# 
-# points(x = post.d18Oi, y = post.dDi, col= alpha("green4", 0.01))
-# 
-# points(x = post.d18Op, y = post.dDp, col= alpha("blue", 0.01))
-# 
-# points(x = post.d18Ov, y = post.dDv, col= alpha("magenta4", 0.01))
-
-# points(x = post.dstar18O, y = post.dstarD, col= alpha("orange", 0.01))
-# 
-# abline(a = intc.map, b = sl.map, lwd = 1.5, col = "orange4")
-# 
-# abline(a = intc.hdi025, b = sl.hdi975, lwd = 1, col = "orange4", lty = 2)
-# 
-# abline(a = intc.hdi975, b = sl.hdi025, lwd = 1, col = "orange4", lty = 2)
+f.hdi025.k <- hdi(post.f.k, ci = 0.95)[[2]]
+f.hdi975.k <- hdi(post.f.k, ci = 0.95)[[3]]
 
 ##########################################################
 ######## Test 4: sensitivity to d18O inflow prior ########
 ##########################################################
 
 # check the density of parameters
-denplot(as.mcmc(post.lw.evp.Sen18Oi))
-# yes, x is sensitive to inflow water isotope values, but this is expected, and inflow prior is well constrained
+denplot(as.mcmc(post.lw.evp.Sen18Oi), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev",
+                 "f.ev","sl.ev", "intc.ev"))
+# yes, x is sensitive to inflow water isotope values, but this is expected, 
+# inflow isotope values essentially determines the evaporated lake water isotopes
+# since inflow prior is well constrained, there is little concern about this sensitivity
+# compile posterior distribution for the variables
+post.d18OA1.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18OA[,1]
 
-# bivariate density plots
-# mcmc_hex(as.mcmc(post.lw.evp.Sen18Oi), pars = c("TC", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.Sen18Oi), pars = c("k", "x"))
-# 
-# mcmc_hex(as.mcmc(post.lw.evp.Sen18Oi), pars = c("rh", "x"))
+post.dDA1.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDA[,1]
 
-# post.d18Ov <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18Ov
-# 
-# post.dDv <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDv
-# 
-# post.d18Oi <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18Oi
-# 
-# post.dDi <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDi
-# 
-# post.d18Op <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18Op
-# 
-# post.dDp <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDp
-# 
-# post.dstar18O <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dstar18O
-# 
-# post.dstarD <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dstarD
-# 
-# post.intc <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$intc
-# 
-# post.sl <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$sl
+post.d18OA.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18OA.ev
 
-post.x.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$x
+post.dDA.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDA.ev
+
+post.d18Ov.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18Ov.ev
+
+post.dDv.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDv.ev
+
+post.d18Oi.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18Oi
+
+post.dDi.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDi
+
+post.d18Op.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$d18Op
+
+post.dDp.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dDp
+
+post.dstar18O.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dstar18O[,t]
+
+post.dstarD.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$dstarD[,t]
+
+post.intc.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$intc.ev
+
+post.sl.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$sl.ev
+
+post.f.i <- post.lw.evp.Sen18Oi$BUGSoutput$sims.list$f.ev
 
 # maximum a posteriori estimate
-x.map.i <- map_estimate(post.x.i)[[1]]
+sl.map.i <- map_estimate(post.sl)[[1]]
 
 # highest density interval, CI = 0.95
-x.hdi025.i <- hdi(post.x.i, ci = 0.95)[[2]]
-x.hdi975.i <- hdi(post.x.i, ci = 0.95)[[3]]
+sl.hdi025.i <- hdi(post.sl, ci = 0.95)[[2]]
+sl.hdi975.i <- hdi(post.sl, ci = 0.95)[[3]]
 
-# cloud plot for simulated sources 
-# plot(x = lw.d18O, y = lw.dD, 
-#      xlim = c(-30,30), ylim = c(-150,200), 
-#      col= alpha("cyan4", 0.5), pch = 16)
-# abline(a = 10, b = 8, lwd = 2)
-# 
-# points(x = post.d18Oi, y = post.dDi, col= alpha("green4", 0.01))
-# 
-# points(x = post.d18Op, y = post.dDp, col= alpha("blue", 0.01))
-# 
-# points(x = post.d18Ov, y = post.dDv, col= alpha("magenta4", 0.01))
+# maximum a posteriori estimate
+intc.map.i <- map_estimate(post.intc)[[1]]
 
-# points(x = post.dstar18O, y = post.dstarD, col= alpha("orange", 0.01))
-# 
-# abline(a = intc.map, b = sl.map, lwd = 1.5, col = "orange4")
-# 
-# abline(a = intc.hdi025, b = sl.hdi975, lwd = 1, col = "orange4", lty = 2)
-# 
-# abline(a = intc.hdi975, b = sl.hdi025, lwd = 1, col = "orange4", lty = 2)
+# highest density interval, CI = 0.95
+intc.hdi025.i <- hdi(post.intc, ci = 0.95)[[2]]
+intc.hdi975.i <- hdi(post.intc, ci = 0.95)[[3]]
+
+# maximum a posteriori estimate
+f.map.i <- map_estimate(post.f.i)[[1]]
+
+# highest density interval, CI = 0.95
+f.hdi025.i <- hdi(post.f.i, ci = 0.95)[[2]]
+f.hdi975.i <- hdi(post.f.i, ci = 0.95)[[3]]
+
+# cloud plot for simulated sources
+par(mfrow=c(1,1))
+plot(x = lw.d18O, y = lw.dD, xlab = "d18O", ylab = "dD",
+     xlim = c(-10,10), ylim = c(-80,60), 
+     col= alpha("cyan4", 0.5), pch = 16,
+     main = "Simulated water isotopes, Lake Turkana evaporation model")
+abline(a = 10, b = 8, lwd = 2)
+
+points(x = post.d18Oi.i, y = post.dDi, col= alpha("green2", 0.01))
+
+points(x = post.d18Op.i, y = post.dDp, col= alpha("blue", 0.01))
+
+# evaporated lake
+points(x = post.d18Ov.i, y = post.dDv, col= alpha("magenta2", 0.01))
+
+points(x = post.d18OA1.i, y = post.dDA1, col= alpha("red", 0.01))
+
+# after mixing with evaporated lake
+points(x = post.d18OA.i, y = post.dDA, col= alpha("red4", 0.01))
+
+# there are a lot of uncertainties in the values of dstar
+# the values seem to depend on three things: 
+# the vapor, the input, and x, which can all be variable
+points(x = post.dstar18O.i, y = post.dstarD.i, col= alpha("orange", 0.01))
+
+abline(a = intc.map.i, b = sl.map.i, lwd = 2, col = "orange4")
+# sl.map = 5.13 (95% CI: 4.47, 5.85)
+# intc.map = 10.32 (95% CI: 6.44, 13.65)
+
+abline(a = intc.hdi025.i, b = sl.hdi975.i, lwd = 1.5, col = "orange4", lty = 2)
+
+abline(a = intc.hdi975.i, b = sl.hdi025.i, lwd = 1.5, col = "orange4", lty = 2)
+
+legend(-10, 60, c("Lake water", "Inflow", "Precipitation", 
+                  "Evap. lake water", "Limiting delta",
+                  "Precip. Eq. air", "Air-Vapor mixture"),
+       pch = c(16,16,16,16,16,16,16), 
+       col = c("cyan4", "green2", "blue", "magenta2", "orange",
+               "red", "red4"))
 
 ##########################################################
 ######## Test 5: sensitivity to d18O precip prior ########
 ##########################################################
 
 # check the density of parameters
-denplot(as.mcmc(post.lw.evp.Sen18Op))
+denplot(as.mcmc(post.lw.evp.Sen18Op), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev",
+                 "f.ev","sl.ev", "intc.ev"))
 # x is not sensitive to precipitation priors, due to the compensation from rh
 
 # mcmc_hex(as.mcmc(post.lw.evp.Sen18Op), pars = c("TC", "x"))
@@ -292,14 +209,14 @@ denplot(as.mcmc(post.lw.evp.Sen18Op))
 # 
 # post.sl <- post.lw.evp.Sen18Op$BUGSoutput$sims.list$sl
 
-post.x.p <- post.lw.evp.Sen18Op$BUGSoutput$sims.list$x
+post.f.p <- post.lw.evp.Sen18Op$BUGSoutput$sims.list$f.ev
 
 # maximum a posteriori estimate
-x.map.p <- map_estimate(post.x.p)[[1]]
+f.map.p <- map_estimate(post.f.p)[[1]]
 
 # highest density interval, CI = 0.95
-x.hdi025.p <- hdi(post.x.p, ci = 0.95)[[2]]
-x.hdi975.p <- hdi(post.x.p, ci = 0.95)[[3]]
+f.hdi025.p <- hdi(post.f.p, ci = 0.95)[[2]]
+f.hdi975.p <- hdi(post.f.p, ci = 0.95)[[3]]
 
 # cloud plot for simulated sources 
 # plot(x = lw.d18O, y = lw.dD, 
@@ -321,45 +238,150 @@ x.hdi975.p <- hdi(post.x.p, ci = 0.95)[[3]]
 # 
 # abline(a = intc.hdi975, b = sl.hdi025, lwd = 1, col = "orange4", lty = 2)
 
-###### summary of posterior distributions of x #######
+###################################################################
+######## Test 6: sensitivity to more evaporated lake water ########
+###################################################################
+
+# check the density of parameters
+denplot(as.mcmc(post.lw.evp.Sen.evap), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev",
+                 "f.ev","sl.ev", "intc.ev"))
+# yes, x is sensitive to inflow water isotope values, but this is expected, 
+# inflow isotope values essentially determines the evaporated lake water isotopes
+# since inflow prior is well constrained, there is little concern about this sensitivity
+# compile posterior distribution for the variables
+post.d18OA1.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$d18OA[,1]
+
+post.dDA1.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dDA[,1]
+
+post.d18OA.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$d18OA.ev
+
+post.dDA.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dDA.ev
+
+post.d18Ov.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$d18Ov.ev
+
+post.dDv.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dDv.ev
+
+post.d18Oi.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$d18Oi
+
+post.dDi.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dDi
+
+post.d18Op.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$d18Op
+
+post.dDp.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dDp
+
+post.dstar18O.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dstar18O[,t]
+
+post.dstarD.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$dstarD[,t]
+
+post.intc.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$intc.ev
+
+post.sl.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$sl.ev
+
+post.f.evap <- post.lw.evp.Sen.evap$BUGSoutput$sims.list$f.ev
+
+# maximum a posteriori estimate
+sl.map.evap <- map_estimate(post.sl.evap)[[1]]
+
+# highest density interval, CI = 0.95
+sl.hdi025.evap <- hdi(post.sl.evap, ci = 0.95)[[2]]
+sl.hdi975.evap <- hdi(post.sl.evap, ci = 0.95)[[3]]
+
+# maximum a posteriori estimate
+intc.map.evap <- map_estimate(post.intc.evap)[[1]]
+
+# highest density interval, CI = 0.95
+intc.hdi025.evap <- hdi(post.intc.evap, ci = 0.95)[[2]]
+intc.hdi975.evap <- hdi(post.intc.evap, ci = 0.95)[[3]]
+
+# maximum a posteriori estimate
+f.map.evap <- map_estimate(post.f.evap)[[1]]
+
+# highest density interval, CI = 0.95
+f.hdi025.evap <- hdi(post.f.evap, ci = 0.95)[[2]]
+f.hdi975.evap <- hdi(post.f.evap, ci = 0.95)[[3]]
+
+# cloud plot for simulated sources
+par(mfrow=c(1,1))
+plot(x = lw.d18O.evap, y = lw.dD.evap, xlab = "d18O", ylab = "dD",
+     xlim = c(-10,10), ylim = c(-80,60), 
+     col= alpha("cyan4", 0.5), pch = 16,
+     main = "Simulated water isotopes, Lake Turkana evaporation model")
+abline(a = 10, b = 8, lwd = 2)
+
+points(x = post.d18Oi.evap, y = post.dDi.evap, col= alpha("green2", 0.01))
+
+points(x = post.d18Op.evap, y = post.dDp.evap, col= alpha("blue", 0.01))
+
+# evaporated lake
+points(x = post.d18Ov.evap, y = post.dDv.evap, col= alpha("magenta2", 0.01))
+
+points(x = post.d18OA1.evap, y = post.dDA1.evap, col= alpha("red", 0.01))
+
+# after mixing with evaporated lake
+points(x = post.d18OA.evap, y = post.dDA.evap, col= alpha("red4", 0.01))
+
+# there are a lot of uncertainties in the values of dstar
+# the values seem to depend on three things: 
+# the vapor, the input, and x, which can all be variable
+points(x = post.dstar18O.evap, y = post.dstarD.evap, col= alpha("orange", 0.01))
+
+abline(a = intc.map.evap, b = sl.map.evap, lwd = 2, col = "orange4")
+# sl.map = 5.13 (95% CI: 4.47, 5.85)
+# intc.map = 10.32 (95% CI: 6.44, 13.65)
+
+abline(a = intc.hdi025.evap, b = sl.hdi975.evap, lwd = 1.5, col = "orange4", lty = 2)
+
+abline(a = intc.hdi975.evap, b = sl.hdi025.evap, lwd = 1.5, col = "orange4", lty = 2)
+
+legend(-10, 60, c("Lake water", "Inflow", "Precipitation", 
+                  "Evap. lake water", "Limiting delta",
+                  "Precip. Eq. air", "Air-Vapor mixture"),
+       pch = c(16,16,16,16,16,16,16), 
+       col = c("cyan4", "green2", "blue", "magenta2", "orange",
+               "red", "red4"))
+
+###### summary of posterior distributions of f #######
 par(mfrow=c(2,3))
-# density plot for the posterior of x
-plot(density(post.x.TC), xlim = c(0, 1), ylim = c(0,7), col = "red",
-     main = "Posterior Sens-LST", xlab = "x")
-lines(density(post.lw.evp.f$BUGSoutput$sims.list$x), col = "blue")
-abline(v = x.map.TC, lwd = 2)
-abline(v = x.hdi025.TC, lwd = 1.5 , lty = 2)
-abline(v = x.hdi975.TC, lwd = 1.5 , lty = 2)
+# density plot for the posterior of f
+plot(density(post.f.TC), xlim = c(0, 1), ylim = c(0,7), col = "red",
+     main = "Posterior Sens-LST", xlab = "f")
+lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+abline(v = f.map.TC, lwd = 2)
+abline(v = f.hdi025.TC, lwd = 1.5 , lty = 2)
+abline(v = f.hdi975.TC, lwd = 1.5 , lty = 2)
 legend(0.5,7,c("Model","Sens-param"),lty = c(1,1), col = c("blue", "red"))
 
-# density plot for the posterior of x
-plot(density(post.x.rh), xlim = c(0, 1), ylim = c(0,7), col = "red",
+# density plot for the posterior of f
+plot(density(post.f.rh), xlim = c(0, 1), ylim = c(0,7), col = "red",
      main = "Posterior Sens-rh", xlab = "x")
-lines(density(post.lw.evp.f$BUGSoutput$sims.list$x), col = "blue")
-abline(v = x.map.rh, lwd = 2)
-abline(v = x.hdi025.rh, lwd = 1.5 , lty = 2)
-abline(v = x.hdi975.rh, lwd = 1.5 , lty = 2)
+lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+abline(v = f.map.rh, lwd = 2)
+abline(v = f.hdi025.rh, lwd = 1.5 , lty = 2)
+abline(v = f.hdi975.rh, lwd = 1.5 , lty = 2)
 
-# density plot for the posterior of x
-plot(density(post.x.k), xlim = c(0, 1), ylim = c(0,7), col = "red",
+# density plot for the posterior of f
+plot(density(post.f.k), xlim = c(0, 1), ylim = c(0,7), col = "red",
      main = "Posterior Sens-k", xlab = "x")
-lines(density(post.lw.evp.f$BUGSoutput$sims.list$x), col = "blue")
-abline(v = x.map.k, lwd = 2)
-abline(v = x.hdi025.k, lwd = 1.5 , lty = 2)
-abline(v = x.hdi975.k, lwd = 1.5 , lty = 2)
+lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+abline(v = f.map.k, lwd = 2)
+abline(v = f.hdi025.k, lwd = 1.5 , lty = 2)
+abline(v = f.hdi975.k, lwd = 1.5 , lty = 2)
 
-# density plot for the posterior of x
-plot(density(post.x.i), xlim = c(0, 1), ylim = c(0,7), col = "red",
+# density plot for the posterior of f
+plot(density(post.f.i), xlim = c(0, 1), ylim = c(0,7), col = "red",
      main = "Posterior Sens-inflow", xlab = "x")
-lines(density(post.lw.evp.f$BUGSoutput$sims.list$x), col = "blue")
-abline(v = x.map.i, lwd = 2)
-abline(v = x.hdi025.i, lwd = 1.5 , lty = 2)
-abline(v = x.hdi975.i, lwd = 1.5 , lty = 2)
+lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+abline(v = f.map.i, lwd = 2)
+abline(v = f.hdi025.i, lwd = 1.5 , lty = 2)
+abline(v = f.hdi975.i, lwd = 1.5 , lty = 2)
 
-# density plot for the posterior of x
-plot(density(post.x.p), xlim = c(0, 1), ylim = c(0,7), col = "red",
+# density plot for the posterior of f
+plot(density(post.f.p), xlim = c(0, 1), ylim = c(0,7), col = "red",
      main = "Posterior Sens-precip", xlab = "x")
-lines(density(post.lw.evp.f$BUGSoutput$sims.list$x), col = "blue")
-abline(v = x.map.p, lwd = 2)
-abline(v = x.hdi025.p, lwd = 1.5 , lty = 2)
-abline(v = x.hdi975.p, lwd = 1.5 , lty = 2)
+lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+abline(v = f.map.p, lwd = 2)
+abline(v = f.hdi025.p, lwd = 1.5 , lty = 2)
+abline(v = f.hdi975.p, lwd = 1.5 , lty = 2)

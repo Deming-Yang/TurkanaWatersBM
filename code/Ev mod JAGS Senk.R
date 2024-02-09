@@ -8,7 +8,7 @@ model {
   # T() truncated at upper and lower limits (to avoid unrealistic values)
   
   # initial relative humidity (upwind)
-  rh.int ~ dbeta(16, 12) T(0.15, 0.9) # this is smaller than downwind rh (Gibson et al 2016)
+  rh.int ~ dbeta(16, 12) T(0.15, 0.95) 
   # rh over Fergurson's Gulf was 0.6, Hopson (1982)
   
   # uninformative k
