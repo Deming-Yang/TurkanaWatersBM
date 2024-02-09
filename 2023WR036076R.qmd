@@ -1,0 +1,58 @@
+---
+title: "Bayesian approach for modeling Lake Turkana water isotopes"
+author: "Deming Yang and Mae Saslaw"
+author-title: "Authors"
+bibliography: references.bib
+csl: american-geophysical-union.csl 
+format: 
+  html:
+    html-math-method: katex
+editor: visual
+execute: 
+  echo: false
+  warning: false
+  cache: true
+  freeze: auto
+---
+
+## Software requirements
+The code was developed in R (ver. 4.3.2) calling the standalone JAGS (Just Another Gibbs Sampler) program, which is required before the code can be run. The JAGS program can be downloaded via [this link](https://sourceforge.net/projects/mcmc-jags/). Please make sure to download the version that is appropriate for your operating system.
+
+```{r}
+#| label: setup
+#| cache: false
+
+pacman::p_load(here, quarto, knitr, tidyverse, readxl, kableExtra, lubridate, ggthemes, deeptime, patchwork, coda, R2jags, bayestestR, bayesplot, mcmcplots)
+```
+
+```{r}
+#| label: load-data 
+#| warning: false
+
+waters <- read.csv(here("data/2023WR036076R.csv"), 
+                   col.names = c("SampleID", "Date", "Latitude", "Longitude", "Location", "WaterType", "d18O", "dD", "Dexcess", "Notes"), skip = 1) |>
+  mutate(across(c("d18O", "dD", "Dexcess"), round, 1)) |>
+  mutate(Date = ymd(Date))
+lakewater <- waters |>
+    filter(WaterType == "Lake")
+
+# water isotope values as model input
+lw.dD <- lakewater$dD
+lw.d18O <- lakewater$d18O
+N <- length(lw.dD) # number of lake water measurements
+```
+
+# Bayesian model 
+
+_include equations?_
+
+```{r}
+#| label: priors-driver
+source(here("code/1 Driver.R"))
+```
+
+## Plots
+
+# Sensitivity tests
+
+## Plots 
