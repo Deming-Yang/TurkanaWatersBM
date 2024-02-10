@@ -436,8 +436,8 @@ dat = list( mean.TC = mean.TC, sd.TC = sd.TC,
             mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
             mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
             mean.dDp = mean.dDp, sd.dDp = sd.dDp,  t = t, N = N, 
-            lw.dD = lw.dD, sd.dD = sd.dD, 
-            lw.d18O = lw.d18O , sd.d18O = sd.d18O)
+            lw.dD = lw.dD.evap, sd.dD = sd.dD, 
+            lw.d18O = lw.d18O.evap , sd.d18O = sd.d18O)
 
 #Start time
 t1 = proc.time()

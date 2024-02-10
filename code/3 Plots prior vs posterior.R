@@ -11,14 +11,15 @@ lines(density(post.lw.evp.f$BUGSoutput$sims.list$TC), col = "red")
 # parameter relative humidity, rh
 x<-seq(from=0.2,to=1,length.out=1000)
 plot(x, dbeta(x, 16, 12), type = "l", col = "blue", ylim = c(0, 13),
-     main="Prior vs Posterior, rh", xlab = "rh", ylab = "Density")
+     main="Prior vs Posterior, rh.int", xlab = "rh", ylab = "Density")
 lines(density(post.rh.int), col = "red")
+legend(0.2,12,c("Prior","Posterior"),lty = c(1,1), col = c("blue", "red"))
 
 # plot relative humidity from before mixing to after mixing
-plot(density(post.rh.int), xlim = c(0.6, 1), xlab = "rh", ylab = "Density",
-     main = "Posterior distribution of rh", col = "blue")
-lines(density(post.rhev), col = "red")
-legend(0.2,12,c("Prior","Posterior"),lty = c(1,1), col = c("blue", "red"))
+plot(density(post.rh.int), xlim = c(0.6, 0.95), xlab = "rh", ylab = "Density",
+     main = "Posteriors of rh.int and rh.ev", col = "cyan4")
+lines(density(post.rhev), col = "blue4")
+legend(0.6,12,c("rh.int","rh.ev"),lty = c(1,1), col = c("cyan4", "blue4"))
 
 # parameter evaporative seasonality, k
 x<-seq(from=0.7,to=1,length.out=1000)
