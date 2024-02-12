@@ -1,6 +1,9 @@
 library(MASS)
 library(viridisLite)
 
+post.rh.int <- post.lw.evp.f$BUGSoutput$sims.list$f.int
+post.rhev <- post.lw.evp.f$BUGSoutput$sims.list$f.ev
+
 # parameter Lake Surface temperature or TC
 par(mfrow=c(2,4))
 x<-seq(from=24,to=32,length.out=1000)
