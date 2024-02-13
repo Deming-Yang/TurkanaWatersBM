@@ -44,14 +44,102 @@ N <- length(lw.dD) # number of lake water measurements
 
 # Bayesian model 
 
-_include equations?_
+## Priors
 
 ```{r}
-#| label: priors-driver
-source(here("code/1 Driver.R"))
+#| label: priors
+#| echo: true
+
+# surface temperature data approximated from Thirumalai et al. 2023
+mean.TC <- 28
+sd.TC <- 1
+
+# mean inflow isotopes of Omo River, this study and Levin et al. 2009
+mean.d18Oi <- -0.9
+sd.d18Oi <- 1
+#meteoric source
+mean.dDi <- mean.d18Oi * 8 + 10
+sd.dDi <- 8
+
+# mean precip isotopes from OIPC (3.496°N, 36.0407°E, 365 masl)
+mean.d18Op <- 1.2 
+sd.d18Op <- 0.7
+mean.dDp <- 19
+sd.dDp <- 6
+
+# measurement precision
+sd.dD <- 0.3
+sd.d18O <- 0.1
+
+# how many time steps the vapor evolves via mixing between atmosphere and evaporated lake 
+t <- 6 
 ```
 
-## Plots
+```{r}
+#| label: driver
+
+# parameters to monitor
+parameters <- c("TC", "f.ev", "k", "dDp", "d18Op", "dDi","d18Oi","f","dstarD", "dstar18O",
+                "eD","e18O", "ekD", "ek18O", "dstarD.ev", "dstar18O.ev","dDL.ev","d18OL.ev",
+                "dDv.ev", "d18Ov.ev","mD", "m18O", "pre.d18OL", "pre.dDL","dDA","d18OA",
+                "intc", "sl", "rh.ev", "dDL","d18OL", "rh","dDA.ev", "d18OA.ev",
+                "sl.ev", "intc.ev")
+
+# input data, including all environmental parameters and measured lake water isotopes
+dat = list( mean.TC = mean.TC, sd.TC = sd.TC, 
+            mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+            mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+            mean.dDp = mean.dDp, sd.dDp = sd.dDp,  t = t, N = N, 
+            lw.dD = lw.dD, sd.dD = sd.dD, 
+            lw.d18O = lw.d18O , sd.d18O = sd.d18O)
+
+# start time
+t1 = proc.time()
+
+# MCMC conditions
+set.seed(t1[3])
+n.iter = 1e6    # 1 million interations
+n.burnin = 4e5  # 400 k burnin
+n.thin = 200 #record data every 200 iterations, total data points: 15000
+
+# run JAGS
+post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.R", 
+                                           parameters.to.save = parameters, 
+                                           data = dat, n.chains=5, n.iter = n.iter, 
+                                           n.burnin = n.burnin, n.thin = n.thin))
+
+# time taken
+proc.time() - t1 #~10 mins
+
+denplot(as.mcmc(post.lw.evp.f), parms =c("TC", "rh.ev","dDi","d18Oi","k","dDp","d18Op",
+                                          "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", "dDL.ev","d18OL.ev",
+                                          "f.ev","sl.ev", "intc.ev"))
+```
+
+```{r}
+#| label: MCMC-summary
+
+kable(post.lw.evp.f$BUGSoutput$summary, format = "html") |>
+  scroll_box(width = "100%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
+
+```
+
+```{r}
+#| label: load-plots
+#| include: false
+source(here("code/2 Plots final.R"))
+source(here("code/3 Plots prior vs posterior.R"))
+```
+
+# Posteriors
+```{r}
+#| label: figure-S1
+plot(fig.S1)
+```
 
 # Sensitivity tests
 
