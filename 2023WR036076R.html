@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -34,6 +68,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="2023WR036076R_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="2023WR036076R_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="2023WR036076R_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="2023WR036076R_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="2023WR036076R_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 </head>
@@ -73,21 +110,1335 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="bayesian-model" class="level1">
 <h1>Bayesian model</h1>
-<p><em>include equations?</em></p>
-<div class="cell" data-hash="2023WR036076R_cache/html/priors-driver_cd71deb1cd9320fcf8a1439df64b90e7">
+<section id="priors" class="level2">
+<h2 class="anchored" data-anchor-id="priors">Priors</h2>
+<div class="cell" data-hash="2023WR036076R_cache/html/priors_ea18ee449726d23266b89637ff0cf400">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># surface temperature data approximated from Thirumalai et al. 2023</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mean.TC <span class="ot">&lt;-</span> <span class="dv">28</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sd.TC <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mean inflow isotopes of Omo River, this study and Levin et al. 2009</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mean.d18Oi <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.9</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sd.d18Oi <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#meteoric source</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>mean.dDi <span class="ot">&lt;-</span> mean.d18Oi <span class="sc">*</span> <span class="dv">8</span> <span class="sc">+</span> <span class="dv">10</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sd.dDi <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># mean precip isotopes from OIPC (3.496°N, 36.0407°E, 365 masl)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mean.d18Op <span class="ot">&lt;-</span> <span class="fl">1.2</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>sd.d18Op <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>mean.dDp <span class="ot">&lt;-</span> <span class="dv">19</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>sd.dDp <span class="ot">&lt;-</span> <span class="dv">6</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># measurement precision</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>sd.dD <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>sd.d18O <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># how many time steps the vapor evolves via mixing between atmosphere and evaporated lake </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="dv">6</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="2023WR036076R_cache/html/MCMC-summary_8aa26b4d6340e44766deebc702020782">
 <div class="cell-output-display">
-<p><img src="2023WR036076R_files/figure-html/priors-driver-1.png" class="img-fluid" width="672"></p>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-condensed table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">mean</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">sd</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">2.5%</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">25%</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">50%</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">75%</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">97.5%</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">Rhat</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF; position: sticky; top: 0; background-color: #FFFFFF;">n.eff</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">TC</td>
+<td style="text-align: right;">28.1076423</td>
+<td style="text-align: right;">1.0086665</td>
+<td style="text-align: right;">26.1413732</td>
+<td style="text-align: right;">27.4222684</td>
+<td style="text-align: right;">28.1215744</td>
+<td style="text-align: right;">28.7852170</td>
+<td style="text-align: right;">30.0802095</td>
+<td style="text-align: right;">1.000949</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OA[1]</td>
+<td style="text-align: right;">-8.1731869</td>
+<td style="text-align: right;">0.6100239</td>
+<td style="text-align: right;">-9.3871389</td>
+<td style="text-align: right;">-8.5823475</td>
+<td style="text-align: right;">-8.1699634</td>
+<td style="text-align: right;">-7.7620005</td>
+<td style="text-align: right;">-6.9821412</td>
+<td style="text-align: right;">1.001049</td>
+<td style="text-align: right;">14000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OA[2]</td>
+<td style="text-align: right;">-7.9583211</td>
+<td style="text-align: right;">0.6053160</td>
+<td style="text-align: right;">-9.1544625</td>
+<td style="text-align: right;">-8.3676815</td>
+<td style="text-align: right;">-7.9525585</td>
+<td style="text-align: right;">-7.5490493</td>
+<td style="text-align: right;">-6.7935552</td>
+<td style="text-align: right;">1.001115</td>
+<td style="text-align: right;">11000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OA[3]</td>
+<td style="text-align: right;">-7.7530253</td>
+<td style="text-align: right;">0.6174656</td>
+<td style="text-align: right;">-8.9750547</td>
+<td style="text-align: right;">-8.1747151</td>
+<td style="text-align: right;">-7.7464135</td>
+<td style="text-align: right;">-7.3353644</td>
+<td style="text-align: right;">-6.5790394</td>
+<td style="text-align: right;">1.001188</td>
+<td style="text-align: right;">8400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OA[4]</td>
+<td style="text-align: right;">-7.5567651</td>
+<td style="text-align: right;">0.6414661</td>
+<td style="text-align: right;">-8.8274134</td>
+<td style="text-align: right;">-7.9941351</td>
+<td style="text-align: right;">-7.5557502</td>
+<td style="text-align: right;">-7.1194809</td>
+<td style="text-align: right;">-6.3467817</td>
+<td style="text-align: right;">1.001253</td>
+<td style="text-align: right;">7100</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OA[5]</td>
+<td style="text-align: right;">-7.3690419</td>
+<td style="text-align: right;">0.6729530</td>
+<td style="text-align: right;">-8.6917993</td>
+<td style="text-align: right;">-7.8292810</td>
+<td style="text-align: right;">-7.3635827</td>
+<td style="text-align: right;">-6.9024073</td>
+<td style="text-align: right;">-6.0935356</td>
+<td style="text-align: right;">1.001302</td>
+<td style="text-align: right;">6400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OA[6]</td>
+<td style="text-align: right;">-7.1893901</td>
+<td style="text-align: right;">0.7085741</td>
+<td style="text-align: right;">-8.5597616</td>
+<td style="text-align: right;">-7.6844411</td>
+<td style="text-align: right;">-7.1881211</td>
+<td style="text-align: right;">-6.6953658</td>
+<td style="text-align: right;">-5.8323832</td>
+<td style="text-align: right;">1.001334</td>
+<td style="text-align: right;">6000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OA.ev</td>
+<td style="text-align: right;">-7.1893901</td>
+<td style="text-align: right;">0.7085741</td>
+<td style="text-align: right;">-8.5597616</td>
+<td style="text-align: right;">-7.6844411</td>
+<td style="text-align: right;">-7.1881211</td>
+<td style="text-align: right;">-6.6953658</td>
+<td style="text-align: right;">-5.8323832</td>
+<td style="text-align: right;">1.001334</td>
+<td style="text-align: right;">6000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OL[1]</td>
+<td style="text-align: right;">5.0894159</td>
+<td style="text-align: right;">0.2487500</td>
+<td style="text-align: right;">4.5516137</td>
+<td style="text-align: right;">4.9665743</td>
+<td style="text-align: right;">5.1040321</td>
+<td style="text-align: right;">5.2203588</td>
+<td style="text-align: right;">5.5443992</td>
+<td style="text-align: right;">1.000897</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OL[2]</td>
+<td style="text-align: right;">5.1155439</td>
+<td style="text-align: right;">0.2001884</td>
+<td style="text-align: right;">4.6839023</td>
+<td style="text-align: right;">5.0112043</td>
+<td style="text-align: right;">5.1262021</td>
+<td style="text-align: right;">5.2279717</td>
+<td style="text-align: right;">5.4791717</td>
+<td style="text-align: right;">1.000877</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OL[3]</td>
+<td style="text-align: right;">5.1444999</td>
+<td style="text-align: right;">0.1573374</td>
+<td style="text-align: right;">4.8085037</td>
+<td style="text-align: right;">5.0554453</td>
+<td style="text-align: right;">5.1513103</td>
+<td style="text-align: right;">5.2386271</td>
+<td style="text-align: right;">5.4334107</td>
+<td style="text-align: right;">1.000862</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OL[4]</td>
+<td style="text-align: right;">5.1757057</td>
+<td style="text-align: right;">0.1212422</td>
+<td style="text-align: right;">4.9282801</td>
+<td style="text-align: right;">5.1009540</td>
+<td style="text-align: right;">5.1778907</td>
+<td style="text-align: right;">5.2525946</td>
+<td style="text-align: right;">5.4064404</td>
+<td style="text-align: right;">1.000860</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OL[5]</td>
+<td style="text-align: right;">5.2086749</td>
+<td style="text-align: right;">0.0950011</td>
+<td style="text-align: right;">5.0206382</td>
+<td style="text-align: right;">5.1464854</td>
+<td style="text-align: right;">5.2083827</td>
+<td style="text-align: right;">5.2709124</td>
+<td style="text-align: right;">5.3963494</td>
+<td style="text-align: right;">1.000896</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18OL[6]</td>
+<td style="text-align: right;">5.2429977</td>
+<td style="text-align: right;">0.0840028</td>
+<td style="text-align: right;">5.0785086</td>
+<td style="text-align: right;">5.1869998</td>
+<td style="text-align: right;">5.2429604</td>
+<td style="text-align: right;">5.2989129</td>
+<td style="text-align: right;">5.4090821</td>
+<td style="text-align: right;">1.000981</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18OL.ev</td>
+<td style="text-align: right;">5.2429977</td>
+<td style="text-align: right;">0.0840028</td>
+<td style="text-align: right;">5.0785086</td>
+<td style="text-align: right;">5.1869998</td>
+<td style="text-align: right;">5.2429604</td>
+<td style="text-align: right;">5.2989129</td>
+<td style="text-align: right;">5.4090821</td>
+<td style="text-align: right;">1.000981</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18Oi</td>
+<td style="text-align: right;">-1.8095422</td>
+<td style="text-align: right;">1.0018644</td>
+<td style="text-align: right;">-3.7807783</td>
+<td style="text-align: right;">-2.4822722</td>
+<td style="text-align: right;">-1.8040889</td>
+<td style="text-align: right;">-1.1321831</td>
+<td style="text-align: right;">0.1253788</td>
+<td style="text-align: right;">1.001461</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">d18Op</td>
+<td style="text-align: right;">0.6212161</td>
+<td style="text-align: right;">0.5832760</td>
+<td style="text-align: right;">-0.5253573</td>
+<td style="text-align: right;">0.2292604</td>
+<td style="text-align: right;">0.6294306</td>
+<td style="text-align: right;">1.0179271</td>
+<td style="text-align: right;">1.7309502</td>
+<td style="text-align: right;">1.001139</td>
+<td style="text-align: right;">9800</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">d18Ov.ev</td>
+<td style="text-align: right;">-1.8095422</td>
+<td style="text-align: right;">1.0018644</td>
+<td style="text-align: right;">-3.7807783</td>
+<td style="text-align: right;">-2.4822722</td>
+<td style="text-align: right;">-1.8040889</td>
+<td style="text-align: right;">-1.1321831</td>
+<td style="text-align: right;">0.1253788</td>
+<td style="text-align: right;">1.001461</td>
+<td style="text-align: right;">4800</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDA[1]</td>
+<td style="text-align: right;">-54.3460011</td>
+<td style="text-align: right;">3.7384261</td>
+<td style="text-align: right;">-62.4885222</td>
+<td style="text-align: right;">-56.6316699</td>
+<td style="text-align: right;">-54.0439062</td>
+<td style="text-align: right;">-51.7584268</td>
+<td style="text-align: right;">-47.7987768</td>
+<td style="text-align: right;">1.001420</td>
+<td style="text-align: right;">5100</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDA[2]</td>
+<td style="text-align: right;">-52.4755836</td>
+<td style="text-align: right;">2.9282880</td>
+<td style="text-align: right;">-58.4637752</td>
+<td style="text-align: right;">-54.3696582</td>
+<td style="text-align: right;">-52.3801964</td>
+<td style="text-align: right;">-50.4905364</td>
+<td style="text-align: right;">-46.9393495</td>
+<td style="text-align: right;">1.001223</td>
+<td style="text-align: right;">7700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDA[3]</td>
+<td style="text-align: right;">-50.6920900</td>
+<td style="text-align: right;">2.3874123</td>
+<td style="text-align: right;">-55.4047950</td>
+<td style="text-align: right;">-52.2897650</td>
+<td style="text-align: right;">-50.6872249</td>
+<td style="text-align: right;">-49.0821145</td>
+<td style="text-align: right;">-45.9854144</td>
+<td style="text-align: right;">1.001019</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDA[4]</td>
+<td style="text-align: right;">-48.9904529</td>
+<td style="text-align: right;">2.1843625</td>
+<td style="text-align: right;">-53.3604776</td>
+<td style="text-align: right;">-50.4454855</td>
+<td style="text-align: right;">-48.9544063</td>
+<td style="text-align: right;">-47.5400272</td>
+<td style="text-align: right;">-44.6769905</td>
+<td style="text-align: right;">1.000971</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDA[5]</td>
+<td style="text-align: right;">-47.3659588</td>
+<td style="text-align: right;">2.3076898</td>
+<td style="text-align: right;">-52.0109084</td>
+<td style="text-align: right;">-48.8838466</td>
+<td style="text-align: right;">-47.3069763</td>
+<td style="text-align: right;">-45.7916727</td>
+<td style="text-align: right;">-42.9287489</td>
+<td style="text-align: right;">1.001129</td>
+<td style="text-align: right;">10000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDA[6]</td>
+<td style="text-align: right;">-45.8142194</td>
+<td style="text-align: right;">2.6437572</td>
+<td style="text-align: right;">-50.9813588</td>
+<td style="text-align: right;">-47.6014531</td>
+<td style="text-align: right;">-45.8277697</td>
+<td style="text-align: right;">-43.9972684</td>
+<td style="text-align: right;">-40.7249355</td>
+<td style="text-align: right;">1.001319</td>
+<td style="text-align: right;">6200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDA.ev</td>
+<td style="text-align: right;">-45.8142194</td>
+<td style="text-align: right;">2.6437572</td>
+<td style="text-align: right;">-50.9813588</td>
+<td style="text-align: right;">-47.6014531</td>
+<td style="text-align: right;">-45.8277697</td>
+<td style="text-align: right;">-43.9972684</td>
+<td style="text-align: right;">-40.7249355</td>
+<td style="text-align: right;">1.001319</td>
+<td style="text-align: right;">6200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDL[1]</td>
+<td style="text-align: right;">31.1665337</td>
+<td style="text-align: right;">3.1259977</td>
+<td style="text-align: right;">23.4137310</td>
+<td style="text-align: right;">29.4595434</td>
+<td style="text-align: right;">31.8876326</td>
+<td style="text-align: right;">33.5370923</td>
+<td style="text-align: right;">35.1211815</td>
+<td style="text-align: right;">1.001848</td>
+<td style="text-align: right;">3100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDL[2]</td>
+<td style="text-align: right;">32.2782144</td>
+<td style="text-align: right;">2.4473006</td>
+<td style="text-align: right;">26.2975118</td>
+<td style="text-align: right;">30.9083489</td>
+<td style="text-align: right;">32.8218794</td>
+<td style="text-align: right;">34.1279517</td>
+<td style="text-align: right;">35.4712091</td>
+<td style="text-align: right;">1.001772</td>
+<td style="text-align: right;">3200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDL[3]</td>
+<td style="text-align: right;">33.3737565</td>
+<td style="text-align: right;">1.7999057</td>
+<td style="text-align: right;">29.0381297</td>
+<td style="text-align: right;">32.3572353</td>
+<td style="text-align: right;">33.7542670</td>
+<td style="text-align: right;">34.7183476</td>
+<td style="text-align: right;">35.8466700</td>
+<td style="text-align: right;">1.001738</td>
+<td style="text-align: right;">3300</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDL[4]</td>
+<td style="text-align: right;">34.4500959</td>
+<td style="text-align: right;">1.1979781</td>
+<td style="text-align: right;">31.6232651</td>
+<td style="text-align: right;">33.7437874</td>
+<td style="text-align: right;">34.6582025</td>
+<td style="text-align: right;">35.3233349</td>
+<td style="text-align: right;">36.2490325</td>
+<td style="text-align: right;">1.001691</td>
+<td style="text-align: right;">3500</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDL[5]</td>
+<td style="text-align: right;">35.5049205</td>
+<td style="text-align: right;">0.6881724</td>
+<td style="text-align: right;">34.0194085</td>
+<td style="text-align: right;">35.0707917</td>
+<td style="text-align: right;">35.5544350</td>
+<td style="text-align: right;">35.9891439</td>
+<td style="text-align: right;">36.7166518</td>
+<td style="text-align: right;">1.001559</td>
+<td style="text-align: right;">4100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDL[6]</td>
+<td style="text-align: right;">36.5365254</td>
+<td style="text-align: right;">0.4972869</td>
+<td style="text-align: right;">35.5459471</td>
+<td style="text-align: right;">36.2062306</td>
+<td style="text-align: right;">36.5419485</td>
+<td style="text-align: right;">36.8677581</td>
+<td style="text-align: right;">37.5044941</td>
+<td style="text-align: right;">1.001282</td>
+<td style="text-align: right;">6700</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDL.ev</td>
+<td style="text-align: right;">36.5365254</td>
+<td style="text-align: right;">0.4972869</td>
+<td style="text-align: right;">35.5459471</td>
+<td style="text-align: right;">36.2062306</td>
+<td style="text-align: right;">36.5419485</td>
+<td style="text-align: right;">36.8677581</td>
+<td style="text-align: right;">37.5044941</td>
+<td style="text-align: right;">1.001282</td>
+<td style="text-align: right;">6700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDi</td>
+<td style="text-align: right;">-1.0871578</td>
+<td style="text-align: right;">6.3921950</td>
+<td style="text-align: right;">-14.2402967</td>
+<td style="text-align: right;">-5.2339187</td>
+<td style="text-align: right;">-0.8117638</td>
+<td style="text-align: right;">3.3590925</td>
+<td style="text-align: right;">10.6722159</td>
+<td style="text-align: right;">1.001153</td>
+<td style="text-align: right;">9400</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dDp</td>
+<td style="text-align: right;">14.9937906</td>
+<td style="text-align: right;">3.7951175</td>
+<td style="text-align: right;">6.6557835</td>
+<td style="text-align: right;">12.7133897</td>
+<td style="text-align: right;">15.3283519</td>
+<td style="text-align: right;">17.7049496</td>
+<td style="text-align: right;">21.4198488</td>
+<td style="text-align: right;">1.001720</td>
+<td style="text-align: right;">3400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dDv.ev</td>
+<td style="text-align: right;">-1.0871578</td>
+<td style="text-align: right;">6.3921950</td>
+<td style="text-align: right;">-14.2402967</td>
+<td style="text-align: right;">-5.2339187</td>
+<td style="text-align: right;">-0.8117638</td>
+<td style="text-align: right;">3.3590925</td>
+<td style="text-align: right;">10.6722159</td>
+<td style="text-align: right;">1.001153</td>
+<td style="text-align: right;">9400</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">deviance</td>
+<td style="text-align: right;">-69.8954066</td>
+<td style="text-align: right;">14.6135981</td>
+<td style="text-align: right;">-96.4817928</td>
+<td style="text-align: right;">-79.9623355</td>
+<td style="text-align: right;">-70.2865373</td>
+<td style="text-align: right;">-60.4879167</td>
+<td style="text-align: right;">-39.3246375</td>
+<td style="text-align: right;">1.001189</td>
+<td style="text-align: right;">8400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstar18O[1]</td>
+<td style="text-align: right;">6.9701662</td>
+<td style="text-align: right;">0.8490602</td>
+<td style="text-align: right;">5.5895079</td>
+<td style="text-align: right;">6.4229437</td>
+<td style="text-align: right;">6.8898968</td>
+<td style="text-align: right;">7.4017391</td>
+<td style="text-align: right;">8.8417508</td>
+<td style="text-align: right;">1.001021</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstar18O[2]</td>
+<td style="text-align: right;">6.9129156</td>
+<td style="text-align: right;">0.7348206</td>
+<td style="text-align: right;">5.6747906</td>
+<td style="text-align: right;">6.4245051</td>
+<td style="text-align: right;">6.8550508</td>
+<td style="text-align: right;">7.3151306</td>
+<td style="text-align: right;">8.5251620</td>
+<td style="text-align: right;">1.000995</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstar18O[3]</td>
+<td style="text-align: right;">6.8658516</td>
+<td style="text-align: right;">0.6420363</td>
+<td style="text-align: right;">5.7629396</td>
+<td style="text-align: right;">6.4288779</td>
+<td style="text-align: right;">6.8181042</td>
+<td style="text-align: right;">7.2399722</td>
+<td style="text-align: right;">8.2664754</td>
+<td style="text-align: right;">1.000981</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstar18O[4]</td>
+<td style="text-align: right;">6.8271848</td>
+<td style="text-align: right;">0.5653769</td>
+<td style="text-align: right;">5.8513600</td>
+<td style="text-align: right;">6.4354522</td>
+<td style="text-align: right;">6.7860304</td>
+<td style="text-align: right;">7.1693912</td>
+<td style="text-align: right;">8.0742026</td>
+<td style="text-align: right;">1.000978</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstar18O[5]</td>
+<td style="text-align: right;">6.7955101</td>
+<td style="text-align: right;">0.5014378</td>
+<td style="text-align: right;">5.9346590</td>
+<td style="text-align: right;">6.4446269</td>
+<td style="text-align: right;">6.7554901</td>
+<td style="text-align: right;">7.1025158</td>
+<td style="text-align: right;">7.8990416</td>
+<td style="text-align: right;">1.000989</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstar18O[6]</td>
+<td style="text-align: right;">6.7697023</td>
+<td style="text-align: right;">0.4479900</td>
+<td style="text-align: right;">6.0161706</td>
+<td style="text-align: right;">6.4520657</td>
+<td style="text-align: right;">6.7297382</td>
+<td style="text-align: right;">7.0455556</td>
+<td style="text-align: right;">7.7609991</td>
+<td style="text-align: right;">1.001015</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstar18O.ev</td>
+<td style="text-align: right;">6.7697023</td>
+<td style="text-align: right;">0.4479900</td>
+<td style="text-align: right;">6.0161706</td>
+<td style="text-align: right;">6.4520657</td>
+<td style="text-align: right;">6.7297382</td>
+<td style="text-align: right;">7.0455556</td>
+<td style="text-align: right;">7.7609991</td>
+<td style="text-align: right;">1.001015</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstarD[1]</td>
+<td style="text-align: right;">40.7268910</td>
+<td style="text-align: right;">5.3940912</td>
+<td style="text-align: right;">28.9599972</td>
+<td style="text-align: right;">37.6138747</td>
+<td style="text-align: right;">41.0022915</td>
+<td style="text-align: right;">44.1309690</td>
+<td style="text-align: right;">50.5687319</td>
+<td style="text-align: right;">1.001185</td>
+<td style="text-align: right;">8500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstarD[2]</td>
+<td style="text-align: right;">41.6880202</td>
+<td style="text-align: right;">4.6722631</td>
+<td style="text-align: right;">31.7672485</td>
+<td style="text-align: right;">38.8892344</td>
+<td style="text-align: right;">41.7984219</td>
+<td style="text-align: right;">44.6276932</td>
+<td style="text-align: right;">50.5660396</td>
+<td style="text-align: right;">1.001126</td>
+<td style="text-align: right;">10000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstarD[3]</td>
+<td style="text-align: right;">42.6303799</td>
+<td style="text-align: right;">4.0243613</td>
+<td style="text-align: right;">34.5266502</td>
+<td style="text-align: right;">40.0929447</td>
+<td style="text-align: right;">42.6008806</td>
+<td style="text-align: right;">45.1326544</td>
+<td style="text-align: right;">50.6410081</td>
+<td style="text-align: right;">1.001067</td>
+<td style="text-align: right;">13000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstarD[4]</td>
+<td style="text-align: right;">43.5506306</td>
+<td style="text-align: right;">3.4486218</td>
+<td style="text-align: right;">36.9870042</td>
+<td style="text-align: right;">41.2781210</td>
+<td style="text-align: right;">43.4043945</td>
+<td style="text-align: right;">45.6810337</td>
+<td style="text-align: right;">50.7039984</td>
+<td style="text-align: right;">1.001011</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstarD[5]</td>
+<td style="text-align: right;">44.4466842</td>
+<td style="text-align: right;">2.9478731</td>
+<td style="text-align: right;">39.2878359</td>
+<td style="text-align: right;">42.4145438</td>
+<td style="text-align: right;">44.2207004</td>
+<td style="text-align: right;">46.2544226</td>
+<td style="text-align: right;">50.7971944</td>
+<td style="text-align: right;">1.000967</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dstarD[6]</td>
+<td style="text-align: right;">45.3173013</td>
+<td style="text-align: right;">2.5290937</td>
+<td style="text-align: right;">41.1619685</td>
+<td style="text-align: right;">43.5190644</td>
+<td style="text-align: right;">45.0647043</td>
+<td style="text-align: right;">46.8496601</td>
+<td style="text-align: right;">50.9248260</td>
+<td style="text-align: right;">1.000952</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dstarD.ev</td>
+<td style="text-align: right;">45.3173013</td>
+<td style="text-align: right;">2.5290937</td>
+<td style="text-align: right;">41.1619685</td>
+<td style="text-align: right;">43.5190644</td>
+<td style="text-align: right;">45.0647043</td>
+<td style="text-align: right;">46.8496601</td>
+<td style="text-align: right;">50.9248260</td>
+<td style="text-align: right;">1.000952</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">e18O</td>
+<td style="text-align: right;">9.0925159</td>
+<td style="text-align: right;">0.0811240</td>
+<td style="text-align: right;">8.9352890</td>
+<td style="text-align: right;">9.0377526</td>
+<td style="text-align: right;">9.0908936</td>
+<td style="text-align: right;">9.1473606</td>
+<td style="text-align: right;">9.2520605</td>
+<td style="text-align: right;">1.000950</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">eD</td>
+<td style="text-align: right;">75.1931322</td>
+<td style="text-align: right;">1.0365145</td>
+<td style="text-align: right;">73.1881539</td>
+<td style="text-align: right;">74.4927083</td>
+<td style="text-align: right;">75.1710327</td>
+<td style="text-align: right;">75.8931041</td>
+<td style="text-align: right;">77.2354416</td>
+<td style="text-align: right;">1.000950</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ek18O[1]</td>
+<td style="text-align: right;">2.9093677</td>
+<td style="text-align: right;">0.4469617</td>
+<td style="text-align: right;">2.0564052</td>
+<td style="text-align: right;">2.6108934</td>
+<td style="text-align: right;">2.9037355</td>
+<td style="text-align: right;">3.1958216</td>
+<td style="text-align: right;">3.8050081</td>
+<td style="text-align: right;">1.000957</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ek18O[2]</td>
+<td style="text-align: right;">2.8063245</td>
+<td style="text-align: right;">0.4282534</td>
+<td style="text-align: right;">1.9667743</td>
+<td style="text-align: right;">2.5197065</td>
+<td style="text-align: right;">2.8085672</td>
+<td style="text-align: right;">3.0894961</td>
+<td style="text-align: right;">3.6438420</td>
+<td style="text-align: right;">1.000947</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ek18O[3]</td>
+<td style="text-align: right;">2.7081843</td>
+<td style="text-align: right;">0.4193384</td>
+<td style="text-align: right;">1.8774402</td>
+<td style="text-align: right;">2.4253144</td>
+<td style="text-align: right;">2.7112455</td>
+<td style="text-align: right;">2.9897335</td>
+<td style="text-align: right;">3.5279180</td>
+<td style="text-align: right;">1.000972</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ek18O[4]</td>
+<td style="text-align: right;">2.6146502</td>
+<td style="text-align: right;">0.4181482</td>
+<td style="text-align: right;">1.7880885</td>
+<td style="text-align: right;">2.3333516</td>
+<td style="text-align: right;">2.6191391</td>
+<td style="text-align: right;">2.8976319</td>
+<td style="text-align: right;">3.4203579</td>
+<td style="text-align: right;">1.001026</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ek18O[5]</td>
+<td style="text-align: right;">2.5254471</td>
+<td style="text-align: right;">0.4226594</td>
+<td style="text-align: right;">1.6896458</td>
+<td style="text-align: right;">2.2384690</td>
+<td style="text-align: right;">2.5329062</td>
+<td style="text-align: right;">2.8151247</td>
+<td style="text-align: right;">3.3358627</td>
+<td style="text-align: right;">1.001098</td>
+<td style="text-align: right;">11000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ek18O[6]</td>
+<td style="text-align: right;">2.4403199</td>
+<td style="text-align: right;">0.4310912</td>
+<td style="text-align: right;">1.5912038</td>
+<td style="text-align: right;">2.1478209</td>
+<td style="text-align: right;">2.4463824</td>
+<td style="text-align: right;">2.7386265</td>
+<td style="text-align: right;">3.2659477</td>
+<td style="text-align: right;">1.001178</td>
+<td style="text-align: right;">8700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ekD[1]</td>
+<td style="text-align: right;">2.5610631</td>
+<td style="text-align: right;">0.3934522</td>
+<td style="text-align: right;">1.8102159</td>
+<td style="text-align: right;">2.2983217</td>
+<td style="text-align: right;">2.5561052</td>
+<td style="text-align: right;">2.8132232</td>
+<td style="text-align: right;">3.3494790</td>
+<td style="text-align: right;">1.000957</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ekD[2]</td>
+<td style="text-align: right;">2.4703561</td>
+<td style="text-align: right;">0.3769836</td>
+<td style="text-align: right;">1.7313154</td>
+<td style="text-align: right;">2.2180515</td>
+<td style="text-align: right;">2.4723303</td>
+<td style="text-align: right;">2.7196268</td>
+<td style="text-align: right;">3.2076074</td>
+<td style="text-align: right;">1.000947</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ekD[3]</td>
+<td style="text-align: right;">2.3839651</td>
+<td style="text-align: right;">0.3691359</td>
+<td style="text-align: right;">1.6526763</td>
+<td style="text-align: right;">2.1349598</td>
+<td style="text-align: right;">2.3866598</td>
+<td style="text-align: right;">2.6318076</td>
+<td style="text-align: right;">3.1055616</td>
+<td style="text-align: right;">1.000972</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ekD[4]</td>
+<td style="text-align: right;">2.3016287</td>
+<td style="text-align: right;">0.3680882</td>
+<td style="text-align: right;">1.5740216</td>
+<td style="text-align: right;">2.0540067</td>
+<td style="text-align: right;">2.3055802</td>
+<td style="text-align: right;">2.5507323</td>
+<td style="text-align: right;">3.0108784</td>
+<td style="text-align: right;">1.001026</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ekD[5]</td>
+<td style="text-align: right;">2.2231049</td>
+<td style="text-align: right;">0.3720594</td>
+<td style="text-align: right;">1.4873642</td>
+<td style="text-align: right;">1.9704833</td>
+<td style="text-align: right;">2.2296709</td>
+<td style="text-align: right;">2.4781027</td>
+<td style="text-align: right;">2.9364989</td>
+<td style="text-align: right;">1.001098</td>
+<td style="text-align: right;">11000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ekD[6]</td>
+<td style="text-align: right;">2.1481689</td>
+<td style="text-align: right;">0.3794817</td>
+<td style="text-align: right;">1.4007076</td>
+<td style="text-align: right;">1.8906874</td>
+<td style="text-align: right;">2.1535057</td>
+<td style="text-align: right;">2.4107628</td>
+<td style="text-align: right;">2.8749540</td>
+<td style="text-align: right;">1.001178</td>
+<td style="text-align: right;">8700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">f</td>
+<td style="text-align: right;">0.0351974</td>
+<td style="text-align: right;">0.0202719</td>
+<td style="text-align: right;">0.0109231</td>
+<td style="text-align: right;">0.0195546</td>
+<td style="text-align: right;">0.0303238</td>
+<td style="text-align: right;">0.0460087</td>
+<td style="text-align: right;">0.0847557</td>
+<td style="text-align: right;">1.001544</td>
+<td style="text-align: right;">4200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">f.ev</td>
+<td style="text-align: right;">0.1604305</td>
+<td style="text-align: right;">0.0837080</td>
+<td style="text-align: right;">0.0534351</td>
+<td style="text-align: right;">0.0940231</td>
+<td style="text-align: right;">0.1426982</td>
+<td style="text-align: right;">0.2098272</td>
+<td style="text-align: right;">0.3577781</td>
+<td style="text-align: right;">1.001517</td>
+<td style="text-align: right;">4400</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">intc[1]</td>
+<td style="text-align: right;">7.5501932</td>
+<td style="text-align: right;">2.2860426</td>
+<td style="text-align: right;">2.6878557</td>
+<td style="text-align: right;">6.1524714</td>
+<td style="text-align: right;">7.6520209</td>
+<td style="text-align: right;">9.0916686</td>
+<td style="text-align: right;">11.7656953</td>
+<td style="text-align: right;">1.001021</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">intc[2]</td>
+<td style="text-align: right;">7.8104259</td>
+<td style="text-align: right;">2.1506296</td>
+<td style="text-align: right;">3.3564979</td>
+<td style="text-align: right;">6.4511990</td>
+<td style="text-align: right;">7.8715002</td>
+<td style="text-align: right;">9.2616472</td>
+<td style="text-align: right;">11.8609338</td>
+<td style="text-align: right;">1.000947</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">intc[3]</td>
+<td style="text-align: right;">8.0607276</td>
+<td style="text-align: right;">2.0411047</td>
+<td style="text-align: right;">3.9437119</td>
+<td style="text-align: right;">6.7291790</td>
+<td style="text-align: right;">8.0872009</td>
+<td style="text-align: right;">9.4340152</td>
+<td style="text-align: right;">11.9717489</td>
+<td style="text-align: right;">1.000894</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">intc[4]</td>
+<td style="text-align: right;">8.3006317</td>
+<td style="text-align: right;">1.9582610</td>
+<td style="text-align: right;">4.4042376</td>
+<td style="text-align: right;">6.9941142</td>
+<td style="text-align: right;">8.3230916</td>
+<td style="text-align: right;">9.6247304</td>
+<td style="text-align: right;">12.0949995</td>
+<td style="text-align: right;">1.000911</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">intc[5]</td>
+<td style="text-align: right;">8.5299567</td>
+<td style="text-align: right;">1.9013228</td>
+<td style="text-align: right;">4.7698997</td>
+<td style="text-align: right;">7.2471461</td>
+<td style="text-align: right;">8.5372009</td>
+<td style="text-align: right;">9.8224439</td>
+<td style="text-align: right;">12.2060230</td>
+<td style="text-align: right;">1.000886</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">intc[6]</td>
+<td style="text-align: right;">8.7487322</td>
+<td style="text-align: right;">1.8682059</td>
+<td style="text-align: right;">5.0498824</td>
+<td style="text-align: right;">7.4986186</td>
+<td style="text-align: right;">8.7540527</td>
+<td style="text-align: right;">10.0119912</td>
+<td style="text-align: right;">12.3729593</td>
+<td style="text-align: right;">1.000906</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">intc.ev</td>
+<td style="text-align: right;">8.7487322</td>
+<td style="text-align: right;">1.8682059</td>
+<td style="text-align: right;">5.0498824</td>
+<td style="text-align: right;">7.4986186</td>
+<td style="text-align: right;">8.7540527</td>
+<td style="text-align: right;">10.0119912</td>
+<td style="text-align: right;">12.3729593</td>
+<td style="text-align: right;">1.000906</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k</td>
+<td style="text-align: right;">0.9751889</td>
+<td style="text-align: right;">0.0232129</td>
+<td style="text-align: right;">0.9129726</td>
+<td style="text-align: right;">0.9648694</td>
+<td style="text-align: right;">0.9819834</td>
+<td style="text-align: right;">0.9924052</td>
+<td style="text-align: right;">0.9993575</td>
+<td style="text-align: right;">1.000896</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m18O[1]</td>
+<td style="text-align: right;">3.8874383</td>
+<td style="text-align: right;">0.7944407</td>
+<td style="text-align: right;">2.6465743</td>
+<td style="text-align: right;">3.3416728</td>
+<td style="text-align: right;">3.7784280</td>
+<td style="text-align: right;">4.3146418</td>
+<td style="text-align: right;">5.7475751</td>
+<td style="text-align: right;">1.000974</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m18O[2]</td>
+<td style="text-align: right;">4.0676053</td>
+<td style="text-align: right;">0.8331239</td>
+<td style="text-align: right;">2.8080596</td>
+<td style="text-align: right;">3.4911023</td>
+<td style="text-align: right;">3.9403229</td>
+<td style="text-align: right;">4.5068554</td>
+<td style="text-align: right;">6.0552983</td>
+<td style="text-align: right;">1.000961</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m18O[3]</td>
+<td style="text-align: right;">4.2567748</td>
+<td style="text-align: right;">0.8882631</td>
+<td style="text-align: right;">2.9334286</td>
+<td style="text-align: right;">3.6411015</td>
+<td style="text-align: right;">4.1175886</td>
+<td style="text-align: right;">4.7210539</td>
+<td style="text-align: right;">6.3907116</td>
+<td style="text-align: right;">1.000983</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m18O[4]</td>
+<td style="text-align: right;">4.4555236</td>
+<td style="text-align: right;">0.9616479</td>
+<td style="text-align: right;">3.0567177</td>
+<td style="text-align: right;">3.7885980</td>
+<td style="text-align: right;">4.2978323</td>
+<td style="text-align: right;">4.9461843</td>
+<td style="text-align: right;">6.7590743</td>
+<td style="text-align: right;">1.001033</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m18O[5]</td>
+<td style="text-align: right;">4.6644740</td>
+<td style="text-align: right;">1.0547136</td>
+<td style="text-align: right;">3.1593483</td>
+<td style="text-align: right;">3.9289671</td>
+<td style="text-align: right;">4.4776798</td>
+<td style="text-align: right;">5.1982762</td>
+<td style="text-align: right;">7.2116076</td>
+<td style="text-align: right;">1.001100</td>
+<td style="text-align: right;">11000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">m18O[6]</td>
+<td style="text-align: right;">4.8842976</td>
+<td style="text-align: right;">1.1686526</td>
+<td style="text-align: right;">3.2484326</td>
+<td style="text-align: right;">4.0662872</td>
+<td style="text-align: right;">4.6715795</td>
+<td style="text-align: right;">5.4600783</td>
+<td style="text-align: right;">7.7204955</td>
+<td style="text-align: right;">1.001175</td>
+<td style="text-align: right;">8700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mD[1]</td>
+<td style="text-align: right;">3.5946411</td>
+<td style="text-align: right;">0.7466708</td>
+<td style="text-align: right;">2.4272926</td>
+<td style="text-align: right;">3.0811684</td>
+<td style="text-align: right;">3.4934492</td>
+<td style="text-align: right;">3.9970351</td>
+<td style="text-align: right;">5.3467829</td>
+<td style="text-align: right;">1.000975</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mD[2]</td>
+<td style="text-align: right;">3.7640207</td>
+<td style="text-align: right;">0.7830659</td>
+<td style="text-align: right;">2.5813847</td>
+<td style="text-align: right;">3.2230685</td>
+<td style="text-align: right;">3.6446124</td>
+<td style="text-align: right;">4.1782141</td>
+<td style="text-align: right;">5.6355022</td>
+<td style="text-align: right;">1.000962</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mD[3]</td>
+<td style="text-align: right;">3.9418640</td>
+<td style="text-align: right;">0.8349382</td>
+<td style="text-align: right;">2.7004376</td>
+<td style="text-align: right;">3.3619308</td>
+<td style="text-align: right;">3.8113745</td>
+<td style="text-align: right;">4.3782973</td>
+<td style="text-align: right;">5.9477211</td>
+<td style="text-align: right;">1.000984</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mD[4]</td>
+<td style="text-align: right;">4.1287136</td>
+<td style="text-align: right;">0.9039692</td>
+<td style="text-align: right;">2.8153179</td>
+<td style="text-align: right;">3.5005175</td>
+<td style="text-align: right;">3.9807137</td>
+<td style="text-align: right;">4.5898829</td>
+<td style="text-align: right;">6.2956855</td>
+<td style="text-align: right;">1.001034</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mD[5]</td>
+<td style="text-align: right;">4.3251545</td>
+<td style="text-align: right;">0.9915068</td>
+<td style="text-align: right;">2.9089472</td>
+<td style="text-align: right;">3.6328988</td>
+<td style="text-align: right;">4.1497336</td>
+<td style="text-align: right;">4.8263256</td>
+<td style="text-align: right;">6.7194330</td>
+<td style="text-align: right;">1.001101</td>
+<td style="text-align: right;">11000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mD[6]</td>
+<td style="text-align: right;">4.5318180</td>
+<td style="text-align: right;">1.0986710</td>
+<td style="text-align: right;">2.9940199</td>
+<td style="text-align: right;">3.7631867</td>
+<td style="text-align: right;">4.3321607</td>
+<td style="text-align: right;">5.0752703</td>
+<td style="text-align: right;">7.1956139</td>
+<td style="text-align: right;">1.001176</td>
+<td style="text-align: right;">8700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pre.d18OL</td>
+<td style="text-align: right;">2.9165153</td>
+<td style="text-align: right;">0.5737004</td>
+<td style="text-align: right;">1.8850153</td>
+<td style="text-align: right;">2.5150463</td>
+<td style="text-align: right;">2.8812443</td>
+<td style="text-align: right;">3.2765513</td>
+<td style="text-align: right;">4.1449345</td>
+<td style="text-align: right;">1.000994</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pre.dDL</td>
+<td style="text-align: right;">0.5941141</td>
+<td style="text-align: right;">0.1400936</td>
+<td style="text-align: right;">0.3642254</td>
+<td style="text-align: right;">0.4923097</td>
+<td style="text-align: right;">0.5796749</td>
+<td style="text-align: right;">0.6785443</td>
+<td style="text-align: right;">0.9074467</td>
+<td style="text-align: right;">1.001115</td>
+<td style="text-align: right;">11000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rh[1]</td>
+<td style="text-align: right;">0.7951150</td>
+<td style="text-align: right;">0.0314762</td>
+<td style="text-align: right;">0.7320417</td>
+<td style="text-align: right;">0.7749421</td>
+<td style="text-align: right;">0.7955116</td>
+<td style="text-align: right;">0.8161343</td>
+<td style="text-align: right;">0.8551827</td>
+<td style="text-align: right;">1.001043</td>
+<td style="text-align: right;">14000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rh[2]</td>
+<td style="text-align: right;">0.8023715</td>
+<td style="text-align: right;">0.0301587</td>
+<td style="text-align: right;">0.7433914</td>
+<td style="text-align: right;">0.7824299</td>
+<td style="text-align: right;">0.8022136</td>
+<td style="text-align: right;">0.8225559</td>
+<td style="text-align: right;">0.8614948</td>
+<td style="text-align: right;">1.001027</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rh[3]</td>
+<td style="text-align: right;">0.8092828</td>
+<td style="text-align: right;">0.0295309</td>
+<td style="text-align: right;">0.7515551</td>
+<td style="text-align: right;">0.7894554</td>
+<td style="text-align: right;">0.8090672</td>
+<td style="text-align: right;">0.8292032</td>
+<td style="text-align: right;">0.8677859</td>
+<td style="text-align: right;">1.001040</td>
+<td style="text-align: right;">14000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rh[4]</td>
+<td style="text-align: right;">0.8158697</td>
+<td style="text-align: right;">0.0294471</td>
+<td style="text-align: right;">0.7591297</td>
+<td style="text-align: right;">0.7959414</td>
+<td style="text-align: right;">0.8155536</td>
+<td style="text-align: right;">0.8356795</td>
+<td style="text-align: right;">0.8740783</td>
+<td style="text-align: right;">1.001074</td>
+<td style="text-align: right;">12000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rh[5]</td>
+<td style="text-align: right;">0.8221516</td>
+<td style="text-align: right;">0.0297647</td>
+<td style="text-align: right;">0.7650801</td>
+<td style="text-align: right;">0.8017518</td>
+<td style="text-align: right;">0.8216263</td>
+<td style="text-align: right;">0.8423613</td>
+<td style="text-align: right;">0.8810109</td>
+<td style="text-align: right;">1.001120</td>
+<td style="text-align: right;">10000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rh[6]</td>
+<td style="text-align: right;">0.8281465</td>
+<td style="text-align: right;">0.0303585</td>
+<td style="text-align: right;">0.7700037</td>
+<td style="text-align: right;">0.8071390</td>
+<td style="text-align: right;">0.8277195</td>
+<td style="text-align: right;">0.8487450</td>
+<td style="text-align: right;">0.8879434</td>
+<td style="text-align: right;">1.001169</td>
+<td style="text-align: right;">8900</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rh.ev</td>
+<td style="text-align: right;">0.8281465</td>
+<td style="text-align: right;">0.0303585</td>
+<td style="text-align: right;">0.7700037</td>
+<td style="text-align: right;">0.8071390</td>
+<td style="text-align: right;">0.8277195</td>
+<td style="text-align: right;">0.8487450</td>
+<td style="text-align: right;">0.8879434</td>
+<td style="text-align: right;">1.001169</td>
+<td style="text-align: right;">8900</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sl[1]</td>
+<td style="text-align: right;">4.7434562</td>
+<td style="text-align: right;">0.5308093</td>
+<td style="text-align: right;">3.5877867</td>
+<td style="text-align: right;">4.4227138</td>
+<td style="text-align: right;">4.7817035</td>
+<td style="text-align: right;">5.1087261</td>
+<td style="text-align: right;">5.6736034</td>
+<td style="text-align: right;">1.001539</td>
+<td style="text-align: right;">4200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sl[2]</td>
+<td style="text-align: right;">4.8873951</td>
+<td style="text-align: right;">0.4668051</td>
+<td style="text-align: right;">3.9058621</td>
+<td style="text-align: right;">4.5905547</td>
+<td style="text-align: right;">4.9100009</td>
+<td style="text-align: right;">5.2086379</td>
+<td style="text-align: right;">5.7374268</td>
+<td style="text-align: right;">1.001428</td>
+<td style="text-align: right;">5000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sl[3]</td>
+<td style="text-align: right;">5.0249612</td>
+<td style="text-align: right;">0.4176072</td>
+<td style="text-align: right;">4.1757685</td>
+<td style="text-align: right;">4.7533303</td>
+<td style="text-align: right;">5.0341380</td>
+<td style="text-align: right;">5.3088817</td>
+<td style="text-align: right;">5.8134060</td>
+<td style="text-align: right;">1.001290</td>
+<td style="text-align: right;">6600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sl[4]</td>
+<td style="text-align: right;">5.1561950</td>
+<td style="text-align: right;">0.3833336</td>
+<td style="text-align: right;">4.4052530</td>
+<td style="text-align: right;">4.9018522</td>
+<td style="text-align: right;">5.1601018</td>
+<td style="text-align: right;">5.4141524</td>
+<td style="text-align: right;">5.9018510</td>
+<td style="text-align: right;">1.001143</td>
+<td style="text-align: right;">9700</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sl[5]</td>
+<td style="text-align: right;">5.2812213</td>
+<td style="text-align: right;">0.3632379</td>
+<td style="text-align: right;">4.5737034</td>
+<td style="text-align: right;">5.0367612</td>
+<td style="text-align: right;">5.2800535</td>
+<td style="text-align: right;">5.5237707</td>
+<td style="text-align: right;">5.9965745</td>
+<td style="text-align: right;">1.001013</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sl[6]</td>
+<td style="text-align: right;">5.4002234</td>
+<td style="text-align: right;">0.3555111</td>
+<td style="text-align: right;">4.7073578</td>
+<td style="text-align: right;">5.1598517</td>
+<td style="text-align: right;">5.3994059</td>
+<td style="text-align: right;">5.6376438</td>
+<td style="text-align: right;">6.1057897</td>
+<td style="text-align: right;">1.000924</td>
+<td style="text-align: right;">15000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sl.ev</td>
+<td style="text-align: right;">5.4002234</td>
+<td style="text-align: right;">0.3555111</td>
+<td style="text-align: right;">4.7073578</td>
+<td style="text-align: right;">5.1598517</td>
+<td style="text-align: right;">5.3994059</td>
+<td style="text-align: right;">5.6376438</td>
+<td style="text-align: right;">6.1057897</td>
+<td style="text-align: right;">1.000924</td>
+<td style="text-align: right;">15000</td>
+</tr>
+</tbody>
+</table>
+</div>
+
 </div>
 </div>
-<section id="plots" class="level2">
-<h2 class="anchored" data-anchor-id="plots">Plots</h2>
 </section>
+</section>
+<section id="posteriors" class="level1">
+<h1>Posteriors</h1>
+<div class="cell" data-hash="2023WR036076R_cache/html/figure-S1_b37691016335093715e55772e7932d39">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Simulated water isotopes</figcaption>
+<p><img src="2023WR036076R_files/figure-html/figure-S1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-hash="2023WR036076R_cache/html/figure-S2_e1339af5faee9c81e60b665c8189618b">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Posterior distributions</figcaption>
+<p><img src="2023WR036076R_files/figure-html/figure-S2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-hash="2023WR036076R_cache/html/figure-S3_684a8e6e81a919cfd32143f55bf1ba4d">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Bivariate density (rh.ev and f.ev)</figcaption>
+<p><img src="2023WR036076R_files/figure-html/figure-S3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="sensitivity-tests" class="level1">
 <h1>Sensitivity tests</h1>
-<section id="plots-1" class="level2">
-<h2 class="anchored" data-anchor-id="plots-1">Plots</h2>
-</section>
+<p>Posterior distributions of f</p>
+<div class="cell" data-hash="2023WR036076R_cache/html/LST-sens_640ef5346aab86e6952a2fdec2098b5e">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Posterior distributions for LST sensitivity test</figcaption>
+<p><img src="2023WR036076R_files/figure-html/LST-sens-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Posterior distributions for rh sensitivity test</p>
+<p>Posterior distributions for k sensitivity test</p>
+<p>Posterior distributions for input isotope sensitivity test</p>
+<p>Posterior distributions for precipitation isotope sensitivity test</p>
+<p>Posterior distributions for lake isotope sensitivity test</p>
 </section>
 
 </main>

@@ -2,10 +2,8 @@
 title: "Bayesian approach for modeling Lake Turkana water isotopes"
 author: "Deming Yang and Mae Saslaw"
 author-title: "Authors"
-bibliography: references.bib
-csl: american-geophysical-union.csl 
-crossref: 
-  fig-title: "Figure S"
+bibliography: references/references.bib
+csl: references/american-geophysical-union.csl 
 fig-cap-location: top
 format: 
   html:
@@ -19,13 +17,13 @@ execute:
 ---
 
 ## Software requirements
-The code was developed in R (ver. 4.3.2) calling the standalone JAGS (Just Another Gibbs Sampler) program, which is required before the code can be run. The JAGS program can be downloaded via [this link](https://sourceforge.net/projects/mcmc-jags/). Please make sure to download the version that is appropriate for your operating system.
+The code was developed in R (ver. 4.3.2) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook. 
 
 ```{r}
 #| label: setup
 #| cache: false
 
-pacman::p_load(here, quarto, knitr, tidyverse, readxl, kableExtra, lubridate, ggthemes, deeptime, patchwork, coda, R2jags, bayestestR, bayesplot, mcmcplots)
+pacman::p_load(here, quarto, knitr, tidyverse, kableExtra, lubridate, ggthemes, scale, deeptime, patchwork, coda, R2jags, bayestestR, bayesplot, mcmcplots)
 ```
 
 ```{r}
@@ -81,6 +79,8 @@ t <- 6
 ```{r}
 #| label: driver
 
+# parameters, input data list, and driver conditions are also used for sensitivity tests below 
+
 # parameters to monitor
 parameters <- c("TC", "f.ev", "k", "dDp", "d18Op", "dDi","d18Oi","f","dstarD", "dstar18O",
                 "eD","e18O", "ekD", "ek18O", "dstarD.ev", "dstar18O.ev","dDL.ev","d18OL.ev",
@@ -132,13 +132,13 @@ kable(post.lw.evp.f$BUGSoutput$summary, format = "html") |>
 #| cache: false
 #| include: false
 source(here("code/2 Plots final.R"))
-source(here("code/3 Plots prior vs posterior.R"))
 ```
 
 # Posteriors
 ```{r}
 #| label: figure-S1
 #| fig-cap: "Simulated water isotopes"
+#| warning: false
 
 fig.S1
 ```
@@ -150,7 +150,6 @@ fig.S1
 denplot(as.mcmc(post.lw.evp.f), 
         parms =c("TC", "rh.ev", "dDi", "d18Oi", "k", "dDp", "d18Op", "dDA.ev", "d18OA.ev", "dDv.ev", "d18Ov.ev", "dDL.ev", "d18OL.ev","f.ev", "sl.ev", "intc.ev"),
         style = "plain")
-
 ```
 
 ```{r}
@@ -163,4 +162,54 @@ mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
 ```
 # Sensitivity tests
 
-## Plots 
+Posterior distributions of f
+
+```{r}
+#| label: LST-sens
+#| fig-cap: "Posterior distributions for LST sensitivity test"
+
+post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS SenTC.R", 
+                                           parameters.to.save = parameters, 
+                                           data = dat, n.chains=5, n.iter = n.iter, 
+                                           n.burnin = n.burnin, n.thin = n.thin))
+
+denplot(as.mcmc(post.lw.evp.senTC), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev","dDp","d18Op",
+                 "f.ev","sl.ev", "intc.ev"),
+        style = "plain")
+```
+
+```{r}
+#| label: rh-sens
+#| fig-cap: "Posterior distributions for rh sensitivity test"
+
+# uniformly distributed rh prior
+range.rh <- c(0.3, 0.95)
+
+post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senrh.R", 
+                                               parameters.to.save = parameters, 
+                                               data = dat, n.chains=5, n.iter = n.iter, 
+                                               n.burnin = n.burnin, n.thin = n.thin))
+
+denplot(as.mcmc(post.lw.evp.senrh), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev","dDp","d18Op",
+                 "f.ev","sl.ev", "intc.ev"),
+        style = "plain")
+```
+
+Posterior distributions for k sensitivity test 
+
+Posterior distributions for input isotope sensitivity test 
+
+Posterior distributions for precipitation isotope sensitivity test 
+
+Posterior distributions for lake isotope sensitivity test 
+
+
+
+
+

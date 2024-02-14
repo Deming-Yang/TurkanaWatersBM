@@ -1,6 +1,7 @@
 library(scales)
 library(viridisLite)
 library(ggplot2)
+library(patchwork)
 library(mcmcplots)
 library(bayestestR)
 library(bayesplot)
@@ -146,7 +147,9 @@ fig.6 <- ggplot(data = NULL) +
                      values = c(
                        "Prior" = color.prior,
                        "Posterior" = color.post)) +
-  theme(plot.title = element_text(vjust = -9, hjust = 0.03)) +
+  theme(
+    plot.title = element_text(vjust = -9, hjust = 0.03),
+    panel.grid = element_blank()) +
   ylab(NULL)
 
 # LST
@@ -190,6 +193,7 @@ fig.6c <- ggplot(data = NULL) +
         linewidth = 0.5))) +
   theme(    
     plot.title = element_text(vjust = -9, hjust = 0.03),
+    panel.grid = element_blank(),
     legend.position= c(vjust = 0.3, hjust = 0.55),
     legend.title = element_blank()) +
   lims(x = c(0.4, 1), y = c(0, 15)) +
@@ -241,9 +245,8 @@ fig.6g <- fig.6 +
 plot(fig.6g)
 
 fig6.panels <- (fig.6a | fig.6b | fig.6c | plot_spacer()) / (fig.6d | fig.6e | fig.6f | fig.6g) 
-
-# plot(fig6.panels)
-# ggsave(here("Figure6.png"), fig6.panels, device = png, width = 6.5, height = 5.6, units = "in")
+plot(fig6.panels)
+ggsave(here("Figure6.png"), fig6.panels, device = png, width = 6.5, height = 5.6, units = "in")
 
 # Figure S1----
 
