@@ -6,6 +6,7 @@ model {
   x = 1 # terminal lake in a steady state
   
   # T() truncated at upper and lower limits (to avoid unrealistic values)
+  range.TC <- c(24, 32)
   
   # initial relative humidity (upwind)
   rh.int ~ dbeta(16, 12) T(0.15, 0.95)
