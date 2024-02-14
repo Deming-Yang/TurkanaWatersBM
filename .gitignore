@@ -50,16 +50,10 @@ rsconnect/
 
 # output
 /out
-2023WR036076R_files/libs/bootstrap/bootstrap-icons.css
-2023WR036076R_files/libs/bootstrap/bootstrap-icons.woff
-2023WR036076R_files/libs/bootstrap/bootstrap.min.css
-2023WR036076R_files/libs/bootstrap/bootstrap.min.js
-2023WR036076R_files/libs/clipboard/clipboard.min.js
-2023WR036076R_files/libs/quarto-html/anchor.min.js
-2023WR036076R_files/libs/quarto-html/popper.min.js
-2023WR036076R_files/libs/quarto-html/quarto-syntax-highlighting.css
-2023WR036076R_files/libs/quarto-html/quarto.js
-2023WR036076R_files/libs/quarto-html/tippy.css
-2023WR036076R_files/libs/quarto-html/tippy.umd.min.js
-.DS_Store
+2023WR036076R_files/
+2023WR036076R_cache/
+
 2023WR036076R.html
+
+
+.DS_Store
