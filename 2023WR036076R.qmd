@@ -4,6 +4,9 @@ author: "Deming Yang and Mae Saslaw"
 author-title: "Authors"
 bibliography: references.bib
 csl: american-geophysical-union.csl 
+crossref: 
+  fig-title: "Figure S"
+fig-cap-location: top
 format: 
   html:
     html-math-method: katex
@@ -109,11 +112,7 @@ post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.
                                            n.burnin = n.burnin, n.thin = n.thin))
 
 # time taken
-proc.time() - t1 #~10 mins
-
-denplot(as.mcmc(post.lw.evp.f), parms =c("TC", "rh.ev","dDi","d18Oi","k","dDp","d18Op",
-                                          "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", "dDL.ev","d18OL.ev",
-                                          "f.ev","sl.ev", "intc.ev"))
+# proc.time() - t1 
 ```
 
 ```{r}
@@ -130,6 +129,7 @@ kable(post.lw.evp.f$BUGSoutput$summary, format = "html") |>
 
 ```{r}
 #| label: load-plots
+#| cache: false
 #| include: false
 source(here("code/2 Plots final.R"))
 source(here("code/3 Plots prior vs posterior.R"))
@@ -138,9 +138,29 @@ source(here("code/3 Plots prior vs posterior.R"))
 # Posteriors
 ```{r}
 #| label: figure-S1
-plot(fig.S1)
+#| fig-cap: "Simulated water isotopes"
+
+fig.S1
 ```
 
+```{r}
+#| label: figure-S2
+#| fig-cap: "Posterior distributions"
+
+denplot(as.mcmc(post.lw.evp.f), 
+        parms =c("TC", "rh.ev", "dDi", "d18Oi", "k", "dDp", "d18Op", "dDA.ev", "d18OA.ev", "dDv.ev", "d18Ov.ev", "dDL.ev", "d18OL.ev","f.ev", "sl.ev", "intc.ev"),
+        style = "plain")
+
+```
+
+```{r}
+#| label: figure-S3
+#| fig-cap: "Bivariate density (rh.ev and f.ev)"
+
+color_scheme_set(scheme = "brewer-GnBu")
+mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
+  theme(panel.grid = element_blank())
+```
 # Sensitivity tests
 
 ## Plots 

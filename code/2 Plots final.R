@@ -20,6 +20,8 @@ post.d18Op <- post.lw.evp.f$BUGSoutput$sims.list$d18Op
 post.dDp <- post.lw.evp.f$BUGSoutput$sims.list$dDp
 post.dstar18O <- post.lw.evp.f$BUGSoutput$sims.list$dstar18O[,t]
 post.dstarD <- post.lw.evp.f$BUGSoutput$sims.list$dstarD[,t]
+post.rh.int <- post.lw.evp.f$BUGSoutput$sims.list$rh[,1]
+post.rhev <- post.lw.evp.f$BUGSoutput$sims.list$rh.ev
 post.intc <- post.lw.evp.f$BUGSoutput$sims.list$intc.ev
 post.sl <- post.lw.evp.f$BUGSoutput$sims.list$sl.ev
 post.f <- post.lw.evp.f$BUGSoutput$sims.list$f.ev
@@ -49,13 +51,11 @@ f.hdi975 <- hdi(post.f, ci = 0.95)[[3]]
 theme_set(theme(
   line = element_line(color = "gray90", linewidth = 0.5),
   rect = element_rect(color = "gray10", fill = "white", linewidth = 0.5),
-  text = element_text(family = "Helvetica", size = 12, face = "plain"),
-  plot.title = element_text(size = 14, face = "bold", hjust = 0),
+  text = element_text(family = "Helvetica", size = 8, face = "plain"),
   axis.ticks = element_blank(),
   legend.background = element_rect(color = "gray10", fill = "white"),
   legend.key = element_blank(),
-  legend.text = element_text(size = 10),
-  legend.title = element_text(size = 10, face = "bold"),
+  legend.title = element_text(face = "bold"),
   legend.title.align = 0, 
   panel.background = element_rect(color = "gray10", fill = "white"),
   panel.grid = element_line(color = "gray90")))
@@ -136,6 +136,115 @@ fig.5 <- ggplot() +
 
 # Figure 6----
 
+color.prior <- "#2166AC"
+color.post <- "#B2182B"
+color.rh.int <- "#117733"
+color.rh.ev <- color.mix
+
+fig.6 <- ggplot(data = NULL) +
+  scale_color_manual(breaks = c("Prior", "Posterior"),
+                     values = c(
+                       "Prior" = color.prior,
+                       "Posterior" = color.post)) +
+  theme(plot.title = element_text(vjust = -9, hjust = 0.03)) +
+  ylab(NULL)
+
+# LST
+x<-seq(from=24,to=32, length.out=1000)
+fig.6a <- fig.6 +
+  geom_line(aes(x = x, y = dnorm(x, mean.TC, sd.TC), color = "Prior"), show.legend = FALSE) +
+  geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$TC, color = "Posterior"), show.legend = FALSE) +
+  lims(x = c(24, 32), y = c(0, 0.48)) +
+  xlab("Lake Surface Temperature (°C)") +
+  ylab("Density") + 
+  ggtitle("a) LST") 
+plot(fig.6a)
+
+# rh.int
+x<-seq(from=0.2,to=1,length.out=1000)
+fig.6b <- fig.6 +
+  geom_line(aes(x = x, y = dbeta(x, 16, 12), color = "Prior"), show.legend = FALSE) +
+  geom_density(aes(x = post.rh.int, color = "Posterior"), show.legend = FALSE) +
+  lims(x = c(0.2, 1), y = c(0, 13)) +
+  xlab("Relative humidity") +
+  ggtitle("b) Initial rh")
+plot(fig.6b)
+
+# rh mixing
+fig.6c <- ggplot(data = NULL) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Prior"), linewidth = 0, show.legend = TRUE) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Posterior"), linewidth = 0, show.legend = TRUE) +
+  geom_density(aes(x = post.rh.int, color = "rh.int"), show.legend = FALSE) +
+  geom_density(aes(x = post.rhev, color = "rh.ev"), show.legend = FALSE) +
+  scale_color_manual(breaks = c("Prior", "Posterior", "rh.int", "rh.ev"),
+                     values = c(
+                       "Prior" = color.prior,
+                       "Posterior" = color.post,
+                       "rh.int" = color.rh.int,
+                       "rh.ev" = color.rh.ev)) +
+  guides(
+    color = guide_legend(
+      override.aes = list(
+        linetype = c(rep("solid", 4)),
+        shape = c(rep(NA, 4)),
+        linewidth = 0.5))) +
+  theme(    
+    plot.title = element_text(vjust = -9, hjust = 0.03),
+    legend.position= c(vjust = 0.3, hjust = 0.55),
+    legend.title = element_blank()) +
+  lims(x = c(0.4, 1), y = c(0, 15)) +
+  xlab("Relative humidity") +
+  ylab(NULL) +
+  ggtitle("c) Initial rh vs. after mixing")
+plot(fig.6c)
+
+# k
+xk<-seq(from=0.7,to=1,length.out=1000)
+fig.6d <- fig.6 +
+  geom_line(aes(x = xk, y = dbeta(xk, 20, 1), color = "Prior"), show.legend = FALSE) +
+  geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$k, color = "Posterior"), show.legend = FALSE) +
+  lims(x = c(0.7, 1), y = c(0, 30)) +
+  xlab("k") +
+  ylab("Density") +
+  ggtitle("d) k")
+plot(fig.6d)
+
+# inflow d18O
+x<-seq(from=-5,to=2,length.out=1000)
+fig.6e <- fig.6 +
+  geom_line(aes(x = x, y = dnorm(x, mean.d18Oi, sd.d18Oi), color = "Prior"), show.legend = FALSE) +
+  geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$d18Oi, color = "Posterior"), show.legend = FALSE) +
+  lims(x = c(-5, 2), y = c(0, 0.5)) +
+  xlab(label.d18O) +
+  ggtitle(expression(paste("e) Inflow ", delta^{18}, "O")))
+plot(fig.6e)
+  
+# precip d18O
+x<-seq(from=-2,to=4,length.out=1000)
+fig.6f <- fig.6 +
+  geom_line(aes(x = x, y = dnorm(x, mean.d18Op, sd.d18Op), color = "Prior"), show.legend = FALSE) +
+  geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$d18Op, color = "Posterior"), show.legend = FALSE) +
+  lims(x = c(-2, 5), y = c(0, 0.8)) +
+  xlab(label.d18O) +
+  ggtitle(expression(paste("f) Precipitation ", delta^{18}, "O")))
+plot(fig.6f)
+
+# precip dD
+x<-seq(from=-5,to=45,length.out=1000)
+fig.6g <- fig.6 +
+  geom_line(aes(x = x, y = dnorm(x, mean.dDp, sd.dDp), color = "Prior"), show.legend = FALSE) +
+  geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$dDp, color = "Posterior"), show.legend = FALSE) +
+  scale_y_continuous(breaks = c(0.0, 0.1), limits = c(0, 0.13)) +
+  xlim(-5, 45) +
+  xlab(label.dD) +
+  ggtitle(expression(paste("g) Precipitation ", delta, "D")))
+plot(fig.6g)
+
+fig6.panels <- (fig.6a | fig.6b | fig.6c | plot_spacer()) / (fig.6d | fig.6e | fig.6f | fig.6g) 
+
+# plot(fig6.panels)
+# ggsave(here("Figure6.png"), fig6.panels, device = png, width = 6.5, height = 5.6, units = "in")
+
 # Figure S1----
 
 # cloud plot for simulated sources 
@@ -199,18 +308,27 @@ fig.S1 <- ggplot(data = NULL) +
         size = size.md))) +
   lims(x = c(-10,10), y = c(-80,60)) +
   labs(x = label.d18O, 
-       y = label.dD,
-       title = "Simulated water isotopes") +
+       y = label.dD) +
   theme(legend.position=c(vjust = 0.8, hjust = 0.15),
         legend.key.height = unit(0, "cm"),
         legend.key.width = unit(0, "cm"),
         legend.background = element_rect(fill = "white", color = "black"),
         legend.title=element_blank())
 
-plot(fig.S1)
-ggsave(here("FigureS1.png"), fig.S1, device = png, width = 8, height = 6, units = "in")
+# plot(fig.S1)
+# ggsave(here("FigureS1.png"), fig.S1, device = png, width = 8, height = 6, units = "in")
 
 # Density plots----
+
+denplot(as.mcmc(post.lw.evp.f), 
+        parms = c("TC", "rh.ev", "dDi", "d18Oi", "k", "dDp", "d18Op", "dDA.ev", "d18OA.ev", "dDv.ev", "d18Ov.ev", "dDL.ev", "d18OL.ev","f.ev", "sl.ev", "intc.ev"),
+        style = "plain")
+
+# bivariate density plot for f and rh
+color_scheme_set(scheme = "brewer-GnBu")
+mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
+  theme(panel.grid = element_blank())
+
 # density plot for the posterior of f
 plot(density(post.f), xlim = c(0, 1), xlab = "f", ylab = "Density",
      main = "Posterior distribution of f.ev")
@@ -218,6 +336,4 @@ abline(v = f.map, lwd = 2)
 abline(v = f.hdi025, lwd = 1.5 , lty = 2)
 abline(v = f.hdi975, lwd = 1.5 , lty = 2)
 
-# bivariate density plot
-# between f and rh
-mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev"))
+

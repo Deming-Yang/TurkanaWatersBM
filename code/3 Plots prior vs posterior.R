@@ -42,7 +42,7 @@ plot(x, dnorm(x, mean.d18Op, sd.d18Op), type = "l", col = "blue", ylim = c(0, 0.
      main="Prior vs Posterior, d18Op", xlab = "d18Op", ylab = "Density")
 lines(density(post.lw.evp.f$BUGSoutput$sims.list$d18Op), col = "red")
 
-# parameter precipitation d18O, d18Op
+# parameter precipitation dD, dDp
 x<-seq(from=-5,to=45,length.out=1000)
 plot(x, dnorm(x, mean.dDp, sd.dDp), type = "l", col = "blue", ylim = c(0, 0.12),
      main="Prior vs Posterior, dDp", xlab = "dDp", ylab = "Density")
