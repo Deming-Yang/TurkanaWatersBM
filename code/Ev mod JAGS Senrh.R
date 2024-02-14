@@ -7,9 +7,6 @@ model {
   
   # T() truncated at upper and lower limits (to avoid unrealistic values)
   
-  # uniformly distributed rh prior
-  range.rh <- c(0.3, 0.95)
-  
   # uninformative prior on rh
   rh.int ~ dunif(range.rh[1], range.rh[2])
   

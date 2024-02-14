@@ -17,7 +17,8 @@ execute:
 ---
 
 ## Software requirements
-The code was developed in R (ver. 4.3.2) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook. 
+
+The code was developed in R (ver. 4.3.2) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook.
 
 ```{r}
 #| label: setup
@@ -43,7 +44,7 @@ lw.d18O <- lakewater$d18O
 N <- length(lw.dD) # number of lake water measurements
 ```
 
-# Bayesian model 
+# Bayesian model
 
 ## Priors
 
@@ -79,8 +80,6 @@ t <- 6
 ```{r}
 #| label: driver
 
-# parameters, input data list, and driver conditions are also used for sensitivity tests below 
-
 # parameters to monitor
 parameters <- c("TC", "f.ev", "k", "dDp", "d18Op", "dDi","d18Oi","f","dstarD", "dstar18O",
                 "eD","e18O", "ekD", "ek18O", "dstarD.ev", "dstar18O.ev","dDL.ev","d18OL.ev",
@@ -106,10 +105,45 @@ n.burnin = 4e5  # 400 k burnin
 n.thin = 200 #record data every 200 iterations, total data points: 15000
 
 # run JAGS
-post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.R", 
-                                           parameters.to.save = parameters, 
-                                           data = dat, n.chains=5, n.iter = n.iter, 
+post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.R",
+                                           parameters.to.save = parameters,
+                                           data = dat, n.chains=5, n.iter = n.iter,
                                            n.burnin = n.burnin, n.thin = n.thin))
+
+# save model results 
+# posterior distributions 
+post.d18OA1 <- post.lw.evp.f$BUGSoutput$sims.list$d18OA[,1]
+post.dDA1 <- post.lw.evp.f$BUGSoutput$sims.list$dDA[,1]
+post.d18OA <- post.lw.evp.f$BUGSoutput$sims.list$d18OA.ev
+post.dDA <- post.lw.evp.f$BUGSoutput$sims.list$dDA.ev
+post.d18Ov <- post.lw.evp.f$BUGSoutput$sims.list$d18Ov.ev
+post.dDv <- post.lw.evp.f$BUGSoutput$sims.list$dDv.ev
+post.d18Oi <- post.lw.evp.f$BUGSoutput$sims.list$d18Oi
+post.dDi <- post.lw.evp.f$BUGSoutput$sims.list$dDi
+post.d18Op <- post.lw.evp.f$BUGSoutput$sims.list$d18Op
+post.dDp <- post.lw.evp.f$BUGSoutput$sims.list$dDp
+post.dstar18O <- post.lw.evp.f$BUGSoutput$sims.list$dstar18O[,t]
+post.dstarD <- post.lw.evp.f$BUGSoutput$sims.list$dstarD[,t]
+post.rh.int <- post.lw.evp.f$BUGSoutput$sims.list$rh[,1]
+post.rhev <- post.lw.evp.f$BUGSoutput$sims.list$rh.ev
+post.intc <- post.lw.evp.f$BUGSoutput$sims.list$intc.ev
+post.sl <- post.lw.evp.f$BUGSoutput$sims.list$sl.ev
+post.f <- post.lw.evp.f$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+sl.map <- map_estimate(post.sl)[[1]]
+# highest density interval, CI = 0.95
+sl.hdi025 <- hdi(post.sl, ci = 0.95)[[2]]
+sl.hdi975 <- hdi(post.sl, ci = 0.95)[[3]]
+# maximum a posteriori estimate
+intc.map <- map_estimate(post.intc)[[1]]
+# highest density interval, CI = 0.95
+intc.hdi025 <- hdi(post.intc, ci = 0.95)[[2]]
+intc.hdi975 <- hdi(post.intc, ci = 0.95)[[3]]
+# maximum a posteriori estimate
+f.map <- map_estimate(post.f)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025 <- hdi(post.f, ci = 0.95)[[2]]
+f.hdi975 <- hdi(post.f, ci = 0.95)[[3]]
 
 # time taken
 # proc.time() - t1 
@@ -118,54 +152,242 @@ post.lw.evp.f = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.
 ```{r}
 #| label: MCMC-summary
 
-kable(post.lw.evp.f$BUGSoutput$summary, format = "html") |>
+kable(post.lw.evp.f$BUGSoutput$summary, format = "html",
+  caption = "MCMC results") |>
   scroll_box(width = "100%", height = "300px") |>
   kable_styling(bootstrap_options = "condensed", "hover",
                 font_size = 10, 
                 fixed_thead = TRUE,
                 html_font = "helvetica")
-
 ```
 
-# Model sensitivity 
+## Model sensitivity
 
-Each code chunk below will run the MCMC simulation again. 
+Each code chunk below will run an MCMC simulation.
 
 ```{r}
 #| label: LST-sens
 
-post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS SenTC.R", 
-                                               parameters.to.save = parameters, 
-                                               data = dat, n.chains=5, n.iter = n.iter, 
+# uniformly distributed Temp prior
+range.TC <- c(24, 32)
+
+dat = list(range.TC = range.TC,
+           mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+           mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+           mean.dDp = mean.dDp, sd.dDp = sd.dDp, t = t, N = N, 
+           lw.dD = lw.dD, sd.dD = sd.dD, 
+           lw.d18O = lw.d18O, sd.d18O = sd.d18O)
+
+post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS SenTC.R",
+                                               parameters.to.save = parameters,
+                                               data = dat, n.chains=5, n.iter = n.iter,
                                                n.burnin = n.burnin, n.thin = n.thin))
+
+# f is not sensitive to TC prior
+post.f.TC <- post.lw.evp.senTC$BUGSoutput$sims.list$f.ev[,1]
+# maximum a posteriori estimate
+f.map.TC <- map_estimate(post.f.TC)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.TC <- hdi(post.f.TC, ci = 0.95)[[2]]
+f.hdi975.TC <- hdi(post.f.TC, ci = 0.95)[[3]]
+
+kable(post.lw.evp.senTC$BUGSoutput$summary[,8], format = "html",
+      caption = "LST sensitivity rhat") |>
+  scroll_box(width = "30%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
 ```
 
 ```{r}
 #| label: rh-sens
 
-post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senrh.R", 
-                                               parameters.to.save = parameters, 
-                                               data = dat, n.chains=5, n.iter = n.iter, 
+# uniformly distributed rh prior
+range.rh <- c(0.3, 0.95)
+
+dat = list(mean.TC = mean.TC, sd.TC = sd.TC, range.rh = range.rh,
+           mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+           mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+           mean.dDp = mean.dDp, sd.dDp = sd.dDp, t = t, N = N, 
+           lw.dD = lw.dD, sd.dD = sd.dD, 
+           lw.d18O = lw.d18O, sd.d18O = sd.d18O)
+
+post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senrh.R",
+                                               parameters.to.save = parameters,
+                                               data = dat, n.chains=5, n.iter = n.iter,
                                                n.burnin = n.burnin, n.thin = n.thin))
+
+#f is not sensitive to rh priors. Both rh and f center around the same posteriors
+post.f.rh <- post.lw.evp.senrh$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+f.map.rh <- map_estimate(post.f.rh)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.rh <- hdi(post.f.rh, ci = 0.95)[[2]]
+f.hdi975.rh <- hdi(post.f.rh, ci = 0.95)[[3]]
+
+kable(post.lw.evp.senrh$BUGSoutput$summary[,8], format = "html",
+      caption = "rh sensitivity rhat") |>
+  scroll_box(width = "30%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
 ```
 
 ```{r}
 #| label: k-sens
 
+# uniformly distributed k prior
+range.k <- c(0.5, 1)
+
+dat = list(mean.TC = mean.TC, sd.TC = sd.TC, range.k = range.k, 
+           mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+           mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+           mean.dDp = mean.dDp, sd.dDp = sd.dDp, t = t, N = N, 
+           lw.dD = lw.dD, sd.dD = sd.dD, 
+           lw.d18O = lw.d18O, sd.d18O = sd.d18O)
+
 post.lw.evp.senk = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senk.R", 
                                                parameters.to.save = parameters, 
                                                data = dat, n.chains=5, n.iter = n.iter, 
                                                n.burnin = n.burnin, n.thin = n.thin))
+
+# f is not sensitive to k. the posterior of k is about the same, regardless of the prior
+post.f.k <- post.lw.evp.senk$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+f.map.k <- map_estimate(post.f.k)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.k <- hdi(post.f.k, ci = 0.95)[[2]]
+f.hdi975.k <- hdi(post.f.k, ci = 0.95)[[3]]
+
+kable(post.lw.evp.senk$BUGSoutput$summary[,8], format = "html",
+      caption = "k sensitivity rhat") |>
+  scroll_box(width = "30%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
+```
+
+```{r}
+#| label: d18Oi-sens
+
+# uninformative inflow isotopes 
+range.d18Oi <- c(-5, 3) 
+range.dDi <- c(-30, 30)
+
+dat = list(mean.TC = mean.TC, sd.TC = sd.TC, 
+           range.d18Oi = range.d18Oi, range.dDi = range.dDi,
+           mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+           mean.dDp = mean.dDp, sd.dDp = sd.dDp, t = t, N = N, 
+           lw.dD = lw.dD, sd.dD = sd.dD, 
+           lw.d18O = lw.d18O, sd.d18O = sd.d18O)
+
+post.lw.evp.sen18Oi = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Sen18Oi.R", 
+                                               parameters.to.save = parameters, 
+                                               data = dat, n.chains=5, n.iter = n.iter, 
+                                               n.burnin = n.burnin, n.thin = n.thin))
+
+# f is sensitive to inflow isotope values as expected 
+post.f.i <- post.lw.evp.sen18Oi$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+f.map.i <- map_estimate(post.f.i)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.i <- hdi(post.f.i, ci = 0.95)[[2]]
+f.hdi975.i <- hdi(post.f.i, ci = 0.95)[[3]]
+
+kable(post.lw.evp.sen18Oi$BUGSoutput$summary[,8], format = "html",
+      caption = "d18Oi sensitivity rhat") |>
+  scroll_box(width = "30%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
+```
+
+```{r}
+#| label: d18Op-sens
+
+# uninformative precip isotopes 
+range.d18Op <- c(-4, 4) 
+range.dDp <- c(-20, 40) 
+  
+dat = list(mean.TC = mean.TC, sd.TC = sd.TC, 
+           mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+           range.d18Op = range.d18Op, range.dDp = range.dDp, 
+           mean.dDp = mean.dDp, sd.dDp = sd.dDp,t = t, N = N, 
+           lw.dD = lw.dD, sd.dD = sd.dD, 
+           lw.d18O = lw.d18O, sd.d18O = sd.d18O)
+
+post.lw.evp.sen18Op = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Sen18Op.R", 
+                                               parameters.to.save = parameters, 
+                                               data = dat, n.chains=5, n.iter = n.iter, 
+                                               n.burnin = n.burnin, n.thin = n.thin))
+
+# f is sensitive to precipitation isotope values as expected
+post.f.p <- post.lw.evp.sen18Op$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+f.map.p <- map_estimate(post.f.p)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.p <- hdi(post.f.p, ci = 0.95)[[2]]
+f.hdi975.p <- hdi(post.f.p, ci = 0.95)[[3]]
+
+kable(post.lw.evp.sen18Op$BUGSoutput$summary[,8], format = "html",
+      caption = "d18Op sensitivity rhat") |>
+  scroll_box(width = "30%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
+```
+
+```{r}
+#| label: d18OL-sens
+
+# model data set with slightly more evaporated water
+lw.d18O.evap <- lw.d18O + 1 
+lw.dD.evap <- (lw.dD + 1) * sl.map # plus 1 * slope
+
+dat = list(mean.TC = mean.TC, sd.TC = sd.TC, 
+           mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
+           mean.d18Op = mean.d18Op, sd.d18Op = sd.d18Op, 
+           mean.dDp = mean.dDp, sd.dDp = sd.dDp, t = t, N = N, 
+           lw.dD = lw.dD.evap, sd.dD = sd.dD, 
+           lw.d18O = lw.d18O.evap, sd.d18O = sd.d18O)
+
+post.lw.evp.sen.evap = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS final.R", 
+                                                 parameters.to.save = parameters, 
+                                                 data = dat, n.chains=5, n.iter = n.iter, 
+                                                 n.burnin = n.burnin, n.thin = n.thin))
+
+# f is sensitive to more evaporated lake water as expected
+post.f.evap <- post.lw.evp.sen.evap$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+f.map.evap <- map_estimate(post.f.evap)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.evap <- hdi(post.f.evap, ci = 0.95)[[2]]
+f.hdi975.evap <- hdi(post.f.evap, ci = 0.95)[[3]]
+
+kable(post.lw.evp.sen.evap$BUGSoutput$summary[,8], format = "html",
+      caption = "d18OL sensitivity rhat") |>
+  scroll_box(width = "30%", height = "300px") |>
+  kable_styling(bootstrap_options = "condensed", "hover",
+                font_size = 10, 
+                fixed_thead = TRUE,
+                html_font = "helvetica")
 ```
 
 ```{r}
 #| label: load-plots
 #| cache: false
 #| include: false
+
 source(here("code/2 Plots final.R"))
 ```
 
-# Posteriors
+## Posteriors
+
 ```{r}
 #| label: figure-S1
 #| fig-cap: "Simulated water isotopes"
@@ -191,7 +413,8 @@ color_scheme_set(scheme = "brewer-GnBu")
 mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
   theme(panel.grid = element_blank())
 ```
-# Sensitivity test posterior distributions
+
+## Sensitivity test posterior distributions
 
 ```{r}
 #| label: figure-S4
@@ -200,7 +423,6 @@ mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
 fig.S5a
 
 ```
-
 
 ```{r}
 #| label: figure-S5
@@ -238,9 +460,38 @@ denplot(as.mcmc(post.lw.evp.senk),
         style = "plain")
 ```
 
+```{r}
+#| label-: figure-S8
+#| fig-cap: "Posterior distributions for d18Oi sensitivity test"
 
-Posterior distributions for input isotope sensitivity test 
+denplot(as.mcmc(post.lw.evp.sen18Oi), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev","dDp","d18Op",
+                 "f.ev","sl.ev", "intc.ev"),
+        style = "plain")
+```
 
-Posterior distributions for precipitation isotope sensitivity test 
+```{r}
+#| label-: figure-S9
+#| fig-cap: "Posterior distributions for d18Op sensitivity test"
 
-Posterior distributions for lake isotope sensitivity test 
+denplot(as.mcmc(post.lw.evp.sen18Op), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev","dDp","d18Op",
+                 "f.ev","sl.ev", "intc.ev"),
+        style = "plain")
+```
+
+```{r}
+#| label-: figure-S10
+#| fig-cap: "Posterior distributions for d18OL sensitivity test"
+
+denplot(as.mcmc(post.lw.evp.sen.evap), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev","dDp","d18Op",
+                 "f.ev","sl.ev", "intc.ev"),
+        style = "plain")
+```

@@ -1,71 +1,4 @@
-library(scales)
-library(viridisLite)
-library(ggplot2)
-library(patchwork)
-library(mcmcplots)
-library(bayestestR)
-library(bayesplot)
-
-# Values for plots----
-
-# posterior distributions for the variables
-post.d18OA1 <- post.lw.evp.f$BUGSoutput$sims.list$d18OA[,1]
-post.dDA1 <- post.lw.evp.f$BUGSoutput$sims.list$dDA[,1]
-post.d18OA <- post.lw.evp.f$BUGSoutput$sims.list$d18OA.ev
-post.dDA <- post.lw.evp.f$BUGSoutput$sims.list$dDA.ev
-post.d18Ov <- post.lw.evp.f$BUGSoutput$sims.list$d18Ov.ev
-post.dDv <- post.lw.evp.f$BUGSoutput$sims.list$dDv.ev
-post.d18Oi <- post.lw.evp.f$BUGSoutput$sims.list$d18Oi
-post.dDi <- post.lw.evp.f$BUGSoutput$sims.list$dDi
-post.d18Op <- post.lw.evp.f$BUGSoutput$sims.list$d18Op
-post.dDp <- post.lw.evp.f$BUGSoutput$sims.list$dDp
-post.dstar18O <- post.lw.evp.f$BUGSoutput$sims.list$dstar18O[,t]
-post.dstarD <- post.lw.evp.f$BUGSoutput$sims.list$dstarD[,t]
-post.rh.int <- post.lw.evp.f$BUGSoutput$sims.list$rh[,1]
-post.rhev <- post.lw.evp.f$BUGSoutput$sims.list$rh.ev
-post.intc <- post.lw.evp.f$BUGSoutput$sims.list$intc.ev
-post.sl <- post.lw.evp.f$BUGSoutput$sims.list$sl.ev
-post.f <- post.lw.evp.f$BUGSoutput$sims.list$f.ev
-
-# maximum a posteriori estimate
-sl.map <- map_estimate(post.sl)[[1]]
-
-# highest density interval, CI = 0.95
-sl.hdi025 <- hdi(post.sl, ci = 0.95)[[2]]
-sl.hdi975 <- hdi(post.sl, ci = 0.95)[[3]]
-
-# maximum a posteriori estimate
-intc.map <- map_estimate(post.intc)[[1]]
-
-# highest density interval, CI = 0.95
-intc.hdi025 <- hdi(post.intc, ci = 0.95)[[2]]
-intc.hdi975 <- hdi(post.intc, ci = 0.95)[[3]]
-
-# maximum a posteriori estimate
-f.map <- map_estimate(post.f)[[1]]
-
-# highest density interval, CI = 0.95
-f.hdi025 <- hdi(post.f, ci = 0.95)[[2]]
-f.hdi975 <- hdi(post.f, ci = 0.95)[[3]]
-
-# posterior distributions for sensitivity tests 
-
-# f is not sensitive to TC prior
-post.f.TC <- post.lw.evp.senTC$BUGSoutput$sims.list$f.ev[,1]
-# maximum a posteriori estimate
-f.map.TC <- map_estimate(post.f.TC)[[1]]
-# highest density interval, CI = 0.95
-f.hdi025.TC <- hdi(post.f.TC, ci = 0.95)[[2]]
-f.hdi975.TC <- hdi(post.f.TC, ci = 0.95)[[3]]
-
-#f is not sensitive to rh priors. Both rh and f center around the same posteriors
-post.f.rh <- post.lw.evp.senrh$BUGSoutput$sims.list$f.ev
-# maximum a posteriori estimate
-f.map.rh <- map_estimate(post.f.rh)[[1]]
-# highest density interval, CI = 0.95
-f.hdi025.rh <- hdi(post.f.rh, ci = 0.95)[[2]]
-f.hdi975.rh <- hdi(post.f.rh, ci = 0.95)[[3]]
-
+# Use with Quarto notebook 
 
 # Plot style----
 theme_set(theme(
@@ -336,14 +269,13 @@ fig.S1 <- ggplot(data = NULL) +
         legend.key.width = unit(0, "cm"),
         legend.background = element_rect(fill = "white", color = "black"),
         legend.title=element_blank())
-
 # plot(fig.S1)
 # ggsave(here("FigureS1.png"), fig.S1, device = png, width = 8, height = 6, units = "in")
 
 # Figure S5----
 
 fig.S5 <- ggplot(data = NULL) +
-  geom_abline(aes(slope = 0, intercept = 0, color = "Sensitivity parameter"), linewidth = 0, show.legend = TRUE) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Sensitivity parameter"), linewidth = 0, show.legend = FALSE) +
   geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$f.ev, color = "Model"), show.legend = FALSE) +
   scale_color_manual(breaks = c("Model", "Sensitivity parameter"),
                      values = c(
@@ -374,18 +306,50 @@ fig.S5a <- fig.S5 +
   ggtitle("a) Temperature") 
 plot(fig.S5a)
 
+fig.S5b <- fig.S5 +
+  geom_vline(xintercept = f.map.rh, linewidth = 0.5) +
+  geom_vline(xintercept = f.hdi025.rh, linewidth = 0.5, linetype = 2) +
+  geom_vline(xintercept = f.hdi975.rh, linewidth = 0.5, linetype = 2) +
+  geom_density(aes(x = post.f.rh, color = "Sensitivity parameter"), show.legend = FALSE) +
+  ggtitle("b) rh") 
+plot(fig.S5b)
+
+fig.S5c <- fig.S5 +
+  geom_vline(xintercept = f.map.k, linewidth = 0.5) +
+  geom_vline(xintercept = f.hdi025.k, linewidth = 0.5, linetype = 2) +
+  geom_vline(xintercept = f.hdi975.k, linewidth = 0.5, linetype = 2) +
+  geom_density(aes(x = post.f.k, color = "Sensitivity parameter"), show.legend = FALSE) +
+  ggtitle("c) k") 
+plot(fig.S5c)
+
+fig.S5d <- fig.S5 +
+  geom_vline(xintercept = f.map.i, linewidth = 0.5) +
+  geom_vline(xintercept = f.hdi025.i, linewidth = 0.5, linetype = 2) +
+  geom_vline(xintercept = f.hdi975.i, linewidth = 0.5, linetype = 2) +
+  geom_density(aes(x = post.f.k, color = "Sensitivity parameter"), show.legend = FALSE) +
+  ggtitle("d) d18Oi") 
+plot(fig.S5d)
+
+fig.S5e <- fig.S5 +
+  geom_vline(xintercept = f.map.p, linewidth = 0.5) +
+  geom_vline(xintercept = f.hdi025.p, linewidth = 0.5, linetype = 2) +
+  geom_vline(xintercept = f.hdi975.p, linewidth = 0.5, linetype = 2) +
+  geom_density(aes(x = post.f.p, color = "Sensitivity parameter"), show.legend = FALSE) +
+  ggtitle("e) d18Op") 
+plot(fig.S5e)
+
+fig.S5f <- fig.S5 +
+  geom_vline(xintercept = f.map.evap, linewidth = 0.5) +
+  geom_vline(xintercept = f.hdi025.evap, linewidth = 0.5, linetype = 2) +
+  geom_vline(xintercept = f.hdi975.evap, linewidth = 0.5, linetype = 2) +
+  geom_density(aes(x = post.f.evap, color = "Sensitivity parameter"), show.legend = FALSE) +
+  ggtitle("f) d18OL") 
+plot(fig.S5f)
+
+fig.S5.panels <- fig.S5a + fig.S5b + fig.S5c + fig.S5d + fig.S5e + fig.S5f 
+plot(fig.S5.panels)
+
 # Density plots----
-
-denplot(as.mcmc(post.lw.evp.f), 
-        parms = c("TC", "rh.ev", "dDi", "d18Oi", "k", "dDp", "d18Op", "dDA.ev", "d18OA.ev", "dDv.ev", "d18Ov.ev", "dDL.ev", "d18OL.ev","f.ev", "sl.ev", "intc.ev"),
-        style = "plain")
-
-# bivariate density plot for f and rh
-color_scheme_set(scheme = "brewer-GnBu")
-mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
-  theme(panel.grid = element_blank())
-
-
 
 # density plot for the posterior of f
 plot(density(post.f), xlim = c(0, 1), xlab = "f", ylab = "Density",
