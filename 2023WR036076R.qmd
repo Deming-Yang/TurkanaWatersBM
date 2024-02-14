@@ -23,7 +23,7 @@ The code was developed in R (ver. 4.3.2) calling [JAGS (Just Another Gibbs Sampl
 #| label: setup
 #| cache: false
 
-pacman::p_load(here, quarto, knitr, tidyverse, kableExtra, lubridate, ggthemes, scale, deeptime, patchwork, coda, R2jags, bayestestR, bayesplot, mcmcplots)
+pacman::p_load(here, quarto, knitr, tidyverse, kableExtra, lubridate, ggthemes, deeptime, patchwork, coda, R2jags, bayestestR, bayesplot, mcmcplots)
 ```
 
 ```{r}
@@ -127,6 +127,37 @@ kable(post.lw.evp.f$BUGSoutput$summary, format = "html") |>
 
 ```
 
+# Model sensitivity 
+
+Each code chunk below will run the MCMC simulation again. 
+
+```{r}
+#| label: LST-sens
+
+post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS SenTC.R", 
+                                               parameters.to.save = parameters, 
+                                               data = dat, n.chains=5, n.iter = n.iter, 
+                                               n.burnin = n.burnin, n.thin = n.thin))
+```
+
+```{r}
+#| label: rh-sens
+
+post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senrh.R", 
+                                               parameters.to.save = parameters, 
+                                               data = dat, n.chains=5, n.iter = n.iter, 
+                                               n.burnin = n.burnin, n.thin = n.thin))
+```
+
+```{r}
+#| label: k-sens
+
+post.lw.evp.senk = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senk.R", 
+                                               parameters.to.save = parameters, 
+                                               data = dat, n.chains=5, n.iter = n.iter, 
+                                               n.burnin = n.burnin, n.thin = n.thin))
+```
+
 ```{r}
 #| label: load-plots
 #| cache: false
@@ -160,18 +191,20 @@ color_scheme_set(scheme = "brewer-GnBu")
 mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
   theme(panel.grid = element_blank())
 ```
-# Sensitivity tests
-
-Posterior distributions of f
+# Sensitivity test posterior distributions
 
 ```{r}
-#| label: LST-sens
-#| fig-cap: "Posterior distributions for LST sensitivity test"
+#| label: figure-S4
+#| fig-cap: Posterior distributions of f
 
-post.lw.evp.senTC = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS SenTC.R", 
-                                           parameters.to.save = parameters, 
-                                           data = dat, n.chains=5, n.iter = n.iter, 
-                                           n.burnin = n.burnin, n.thin = n.thin))
+fig.S5a
+
+```
+
+
+```{r}
+#| label: figure-S5
+#| fig-cap: "Posterior distributions for LST sensitivity test"
 
 denplot(as.mcmc(post.lw.evp.senTC), 
         parms =c("TC", "rh.ev","dDi","d18Oi","k", 
@@ -182,16 +215,8 @@ denplot(as.mcmc(post.lw.evp.senTC),
 ```
 
 ```{r}
-#| label: rh-sens
+#| label: figure-S6
 #| fig-cap: "Posterior distributions for rh sensitivity test"
-
-# uniformly distributed rh prior
-range.rh <- c(0.3, 0.95)
-
-post.lw.evp.senrh = do.call(jags.parallel,list(model.file = "code/Ev mod JAGS Senrh.R", 
-                                               parameters.to.save = parameters, 
-                                               data = dat, n.chains=5, n.iter = n.iter, 
-                                               n.burnin = n.burnin, n.thin = n.thin))
 
 denplot(as.mcmc(post.lw.evp.senrh), 
         parms =c("TC", "rh.ev","dDi","d18Oi","k", 
@@ -201,15 +226,21 @@ denplot(as.mcmc(post.lw.evp.senrh),
         style = "plain")
 ```
 
-Posterior distributions for k sensitivity test 
+```{r}
+#| label-: figure-S7
+#| fig-cap: "Posterior distributions for k sensitivity test"
+
+denplot(as.mcmc(post.lw.evp.senk), 
+        parms =c("TC", "rh.ev","dDi","d18Oi","k", 
+                 "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
+                 "dDL.ev","d18OL.ev","dDp","d18Op",
+                 "f.ev","sl.ev", "intc.ev"),
+        style = "plain")
+```
+
 
 Posterior distributions for input isotope sensitivity test 
 
 Posterior distributions for precipitation isotope sensitivity test 
 
 Posterior distributions for lake isotope sensitivity test 
-
-
-
-
-

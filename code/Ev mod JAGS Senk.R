@@ -11,6 +11,8 @@ model {
   rh.int ~ dbeta(16, 12) T(0.15, 0.95) 
   # rh over Fergurson's Gulf was 0.6, Hopson (1982)
   
+  # uniformly distributed k prior
+  range.k <- c(0.5, 1)
   # uninformative k
   k ~ dunif(range.k[1], range.k[2])
   

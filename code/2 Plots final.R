@@ -48,6 +48,25 @@ f.map <- map_estimate(post.f)[[1]]
 f.hdi025 <- hdi(post.f, ci = 0.95)[[2]]
 f.hdi975 <- hdi(post.f, ci = 0.95)[[3]]
 
+# posterior distributions for sensitivity tests 
+
+# f is not sensitive to TC prior
+post.f.TC <- post.lw.evp.senTC$BUGSoutput$sims.list$f.ev[,1]
+# maximum a posteriori estimate
+f.map.TC <- map_estimate(post.f.TC)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.TC <- hdi(post.f.TC, ci = 0.95)[[2]]
+f.hdi975.TC <- hdi(post.f.TC, ci = 0.95)[[3]]
+
+#f is not sensitive to rh priors. Both rh and f center around the same posteriors
+post.f.rh <- post.lw.evp.senrh$BUGSoutput$sims.list$f.ev
+# maximum a posteriori estimate
+f.map.rh <- map_estimate(post.f.rh)[[1]]
+# highest density interval, CI = 0.95
+f.hdi025.rh <- hdi(post.f.rh, ci = 0.95)[[2]]
+f.hdi975.rh <- hdi(post.f.rh, ci = 0.95)[[3]]
+
+
 # Plot style----
 theme_set(theme(
   line = element_line(color = "gray90", linewidth = 0.5),
@@ -246,7 +265,7 @@ plot(fig.6g)
 
 fig6.panels <- (fig.6a | fig.6b | fig.6c | plot_spacer()) / (fig.6d | fig.6e | fig.6f | fig.6g) 
 plot(fig6.panels)
-ggsave(here("Figure6.png"), fig6.panels, device = png, width = 6.5, height = 5.6, units = "in")
+# ggsave(here("Figure6.png"), fig6.panels, device = png, width = 6.5, height = 5.6, units = "in")
 
 # Figure S1----
 
@@ -321,6 +340,40 @@ fig.S1 <- ggplot(data = NULL) +
 # plot(fig.S1)
 # ggsave(here("FigureS1.png"), fig.S1, device = png, width = 8, height = 6, units = "in")
 
+# Figure S5----
+
+fig.S5 <- ggplot(data = NULL) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Sensitivity parameter"), linewidth = 0, show.legend = TRUE) +
+  geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$f.ev, color = "Model"), show.legend = FALSE) +
+  scale_color_manual(breaks = c("Model", "Sensitivity parameter"),
+                     values = c(
+                       "Model" = color.post,
+                       "Sensitivity parameter" = color.prior)) +
+  guides(
+    color = guide_legend(
+      override.aes = list(
+        linetype = c(rep("solid", 2)),
+        shape = c(rep(NA, 2)),
+        linewidth = 0.5))) +
+  theme(
+    plot.title = element_text(vjust = 0, hjust = 0),
+    legend.title = element_blank(),
+    legend.position = c(vjust = 0.8, hjust = 0.8),
+    panel.grid = element_blank()) +
+  xlab("f.ev") +
+  ylab(NULL)
+plot(fig.S5)
+
+fig.S5a <- fig.S5 +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Model"), linewidth = 0, show.legend = TRUE) +
+  geom_vline(xintercept = f.map.TC, linewidth = 0.5) +
+  geom_vline(xintercept = f.hdi025.TC, linewidth = 0.5, linetype = 2) +
+  geom_vline(xintercept = f.hdi975.TC, linewidth = 0.5, linetype = 2) +
+  geom_density(aes(x = post.f.TC, color = "Sensitivity parameter"), show.legend = FALSE) +
+  ylab("Density") + 
+  ggtitle("a) Temperature") 
+plot(fig.S5a)
+
 # Density plots----
 
 denplot(as.mcmc(post.lw.evp.f), 
@@ -331,6 +384,8 @@ denplot(as.mcmc(post.lw.evp.f),
 color_scheme_set(scheme = "brewer-GnBu")
 mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
   theme(panel.grid = element_blank())
+
+
 
 # density plot for the posterior of f
 plot(density(post.f), xlim = c(0, 1), xlab = "f", ylab = "Density",
