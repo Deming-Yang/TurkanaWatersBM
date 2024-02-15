@@ -52,9 +52,15 @@ rsconnect/
 /out
 2023WR036076R_files/
 2023WR036076R_cache/
-
 2023WR036076R.html
 
-
 .DS_Store
+
+# files to exclude from release 
 2023WR036076R.rmarkdown
+TurkanaWatersBM.Rproj
+code/1 Driver.R
+code/3 Plots prior vs posterior.R
+code/4 Driver Sensitivity.R
+code/5 Plots Sensitivity.R
+data/Saslaw_et_al_2024.xlsx
