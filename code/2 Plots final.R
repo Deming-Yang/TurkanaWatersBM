@@ -45,9 +45,12 @@ label.dD <- expression(paste(delta, "D (‰ VSMOW)"))
 # Figure 5----
 
 fig.5 <- ggplot() + 
-  geom_point(data = NULL, aes(x = post.d18Oi, y = post.dDi), color = color.river, shape = ".", alpha = 0.25) +
+  geom_point(data = NULL, aes(x = post.d18Oi, y = post.dDi), color = color.river, shape = ".", alpha = 0.1) +
+  geom_point(data = NULL, aes(x = post.d18OL.ev, y = post.dDL.ev), color = color.lake, shape = ".", alpha = 0.1) +
   geom_abline(data = NULL, aes(slope = 8, intercept = 10, color = "GMWL")) +
   geom_abline(data = NULL, aes(slope = sl.map, intercept = intc.map, color = "LEL")) +
+  geom_abline(aes(slope = sl.hdi975, intercept = intc.hdi025, color = "LEL"), linetype = "dashed") +
+  geom_abline(aes(slope = sl.hdi025, intercept = intc.hdi975, color = "LEL"), linetype = "dashed") +
   geom_point(data = waters |>
                filter(WaterType %in% c("Lake","Delta", "River")),
              aes(x = d18O, y = dD, color = WaterType, shape = WaterType), size = size.lg) +
@@ -78,14 +81,15 @@ fig.5 <- ggplot() +
         size = size.md))) +
   labs(x = label.d18O, 
        y = label.dD) +
+  lims(x = c(-8, 9), y = c(-40, 50)) +
   theme(text = element_text(family = "Helvetica", size = 10, face = "plain"),
         legend.position=c(vjust = 0.9, hjust = 0.15),
         legend.key.height = unit(0, "cm"),
         legend.key.width = unit(0, "cm"),
         legend.background = element_rect(fill = "white", color = "black"),
         legend.title=element_blank())
-# plot(fig.5)
-# ggsave(here("Figure5.png"), fig.5, device = png, width = 8, height = 5.6, units = "in")
+plot(fig.5)
+ggsave(here("Figure5.png"), fig.5, device = png, width = 8, height = 5.6, units = "in")
 
 # Figure 6----
 
@@ -100,6 +104,7 @@ fig.6 <- ggplot(data = NULL) +
                        "Prior" = color.prior,
                        "Posterior" = color.post)) +
   theme(
+    legend.key.size = unit(0.1, "cm"),
     plot.title = element_text(vjust = -9, hjust = 0.03),
     panel.grid = element_blank()) +
   ylab(NULL)
@@ -110,9 +115,9 @@ fig.6a <- fig.6 +
   geom_line(aes(x = x, y = dnorm(x, mean.TC, sd.TC), color = "Prior"), show.legend = FALSE) +
   geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$TC, color = "Posterior"), show.legend = FALSE) +
   lims(x = c(24, 32), y = c(0, 0.48)) +
-  xlab("Lake Surface Temperature (°C)") +
+  xlab(str_wrap("Lake Surface Temperature (°C)", 17)) +
   ylab("Density") + 
-  ggtitle("a) LST") 
+  ggtitle(" a) LST") 
 plot(fig.6a)
 
 # rh.int
@@ -122,26 +127,24 @@ fig.6b <- fig.6 +
   geom_density(aes(x = post.rh.int, color = "Posterior"), show.legend = FALSE) +
   lims(x = c(0.2, 1), y = c(0, 13)) +
   xlab("Relative humidity") +
-  ggtitle("b) Initial rh")
+  ggtitle(" b) Initial rh")
 plot(fig.6b)
 
 # rh mixing
 fig.6c <- ggplot(data = NULL) +
-  geom_abline(aes(slope = 0, intercept = 0, color = "Prior"), linewidth = 0, show.legend = TRUE) +
-  geom_abline(aes(slope = 0, intercept = 0, color = "Posterior"), linewidth = 0, show.legend = TRUE) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "rh.int"), linewidth = 0, show.legend = TRUE) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "rh.ev"), linewidth = 0, show.legend = TRUE) +
   geom_density(aes(x = post.rh.int, color = "rh.int"), show.legend = FALSE) +
   geom_density(aes(x = post.rhev, color = "rh.ev"), show.legend = FALSE) +
-  scale_color_manual(breaks = c("Prior", "Posterior", "rh.int", "rh.ev"),
+  scale_color_manual(breaks = c("rh.int", "rh.ev"),
                      values = c(
-                       "Prior" = color.prior,
-                       "Posterior" = color.post,
                        "rh.int" = color.rh.int,
                        "rh.ev" = color.rh.ev)) +
   guides(
     color = guide_legend(
       override.aes = list(
-        linetype = c(rep("solid", 4)),
-        shape = c(rep(NA, 4)),
+        linetype = c(rep("solid", 2)),
+        shape = c(rep(NA, 2)),
         linewidth = 0.5))) +
   theme(    
     plot.title = element_text(vjust = -9, hjust = 0.03),
@@ -151,7 +154,7 @@ fig.6c <- ggplot(data = NULL) +
   lims(x = c(0.4, 1), y = c(0, 15)) +
   xlab("Relative humidity") +
   ylab(NULL) +
-  ggtitle("c) Initial rh vs. after mixing")
+  ggtitle(" c) Initial rh vs. mixed")
 plot(fig.6c)
 
 # k
@@ -162,7 +165,7 @@ fig.6d <- fig.6 +
   lims(x = c(0.7, 1), y = c(0, 30)) +
   xlab("k") +
   ylab("Density") +
-  ggtitle("d) k")
+  ggtitle(" d) k")
 plot(fig.6d)
 
 # inflow d18O
@@ -172,7 +175,7 @@ fig.6e <- fig.6 +
   geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$d18Oi, color = "Posterior"), show.legend = FALSE) +
   lims(x = c(-5, 2), y = c(0, 0.5)) +
   xlab(label.d18O) +
-  ggtitle(expression(paste("e) Inflow ", delta^{18}, "O")))
+  ggtitle(expression(paste(" e) Inflow ", delta^{18}, "O")))
 plot(fig.6e)
   
 # precip d18O
@@ -182,7 +185,7 @@ fig.6f <- fig.6 +
   geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$d18Op, color = "Posterior"), show.legend = FALSE) +
   lims(x = c(-2, 5), y = c(0, 0.8)) +
   xlab(label.d18O) +
-  ggtitle(expression(paste("f) Precipitation ", delta^{18}, "O")))
+  ggtitle(expression(paste(" f) Precipitation ", delta^{18}, "O")))
 plot(fig.6f)
 
 # precip dD
@@ -193,10 +196,31 @@ fig.6g <- fig.6 +
   scale_y_continuous(breaks = c(0.0, 0.1), limits = c(0, 0.13)) +
   xlim(-5, 45) +
   xlab(label.dD) +
-  ggtitle(expression(paste("g) Precipitation ", delta, "D")))
+  ggtitle(expression(paste(" g) Precipitation ", delta, "D")))
 plot(fig.6g)
 
-fig6.panels <- (fig.6a | fig.6b | fig.6c | plot_spacer()) / (fig.6d | fig.6e | fig.6f | fig.6g) 
+fig.6.blank <- ggplot() +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Prior"), linewidth = 0, show.legend = TRUE) +
+  geom_abline(aes(slope = 0, intercept = 0, color = "Posterior"), linewidth = 0, show.legend = TRUE) +
+  xlab(" ") +
+  ylab(" ") +
+  scale_color_manual(breaks = c("Prior", "Posterior"),
+                     values = c(
+                       "Prior" = color.prior,
+                       "Posterior" = color.post)) +
+  guides(
+    color = guide_legend(
+      override.aes = list(
+        linetype = c(rep("solid", 2)),
+        shape = c(rep(NA, 2)),
+        linewidth = 0.5))) +
+  theme(    
+    panel.background = element_rect(color = NA),
+    legend.position= c(vjust = 0.35, hjust = 0.55),
+    legend.title = element_blank())
+plot(fig.6.blank)
+
+fig6.panels <- (fig.6a | fig.6b | fig.6c | fig.6.blank) / (fig.6d | fig.6e | fig.6f | fig.6g) 
 plot(fig6.panels)
 # ggsave(here("Figure6.png"), fig6.panels, device = png, width = 6.5, height = 5.6, units = "in")
 
@@ -272,9 +296,9 @@ fig.S1 <- ggplot(data = NULL) +
 # plot(fig.S1)
 # ggsave(here("FigureS1.png"), fig.S1, device = png, width = 8, height = 6, units = "in")
 
-# Figure S5----
+# Figure S4----
 
-fig.S5 <- ggplot(data = NULL) +
+fig.S4 <- ggplot(data = NULL) +
   geom_abline(aes(slope = 0, intercept = 0, color = "Sensitivity parameter"), linewidth = 0, show.legend = FALSE) +
   geom_density(aes(x = post.lw.evp.f$BUGSoutput$sims.list$f.ev, color = "Model"), show.legend = FALSE) +
   scale_color_manual(breaks = c("Model", "Sensitivity parameter"),
@@ -287,67 +311,69 @@ fig.S5 <- ggplot(data = NULL) +
         linetype = c(rep("solid", 2)),
         shape = c(rep(NA, 2)),
         linewidth = 0.5))) +
-  theme(
-    plot.title = element_text(vjust = 0, hjust = 0),
-    legend.title = element_blank(),
-    legend.position = c(vjust = 0.8, hjust = 0.8),
-    panel.grid = element_blank()) +
   xlab("f.ev") +
   ylab(NULL)
-plot(fig.S5)
+plot(fig.S4)
 
-fig.S5a <- fig.S5 +
+fig.S4a <- fig.S4 +
   geom_abline(aes(slope = 0, intercept = 0, color = "Model"), linewidth = 0, show.legend = TRUE) +
   geom_vline(xintercept = f.map.TC, linewidth = 0.5) +
   geom_vline(xintercept = f.hdi025.TC, linewidth = 0.5, linetype = 2) +
   geom_vline(xintercept = f.hdi975.TC, linewidth = 0.5, linetype = 2) +
   geom_density(aes(x = post.f.TC, color = "Sensitivity parameter"), show.legend = FALSE) +
+  theme(
+    plot.title = element_text(vjust = 0, hjust = 0),
+    legend.title = element_blank(),
+    legend.key.size = unit(0.1, "cm"),
+    legend.position = c(vjust = 0.6, hjust = 0.8),
+    panel.grid = element_blank()) +
   ylab("Density") + 
   ggtitle("a) Temperature") 
-plot(fig.S5a)
+plot(fig.S4a)
 
-fig.S5b <- fig.S5 +
+fig.S4b <- fig.S4 +
   geom_vline(xintercept = f.map.rh, linewidth = 0.5) +
   geom_vline(xintercept = f.hdi025.rh, linewidth = 0.5, linetype = 2) +
   geom_vline(xintercept = f.hdi975.rh, linewidth = 0.5, linetype = 2) +
   geom_density(aes(x = post.f.rh, color = "Sensitivity parameter"), show.legend = FALSE) +
   ggtitle("b) rh") 
-plot(fig.S5b)
+plot(fig.S4b)
 
-fig.S5c <- fig.S5 +
+fig.S4c <- fig.S4 +
   geom_vline(xintercept = f.map.k, linewidth = 0.5) +
   geom_vline(xintercept = f.hdi025.k, linewidth = 0.5, linetype = 2) +
   geom_vline(xintercept = f.hdi975.k, linewidth = 0.5, linetype = 2) +
   geom_density(aes(x = post.f.k, color = "Sensitivity parameter"), show.legend = FALSE) +
   ggtitle("c) k") 
-plot(fig.S5c)
+plot(fig.S4c)
 
-fig.S5d <- fig.S5 +
+fig.S4d <- fig.S4 +
   geom_vline(xintercept = f.map.i, linewidth = 0.5) +
   geom_vline(xintercept = f.hdi025.i, linewidth = 0.5, linetype = 2) +
   geom_vline(xintercept = f.hdi975.i, linewidth = 0.5, linetype = 2) +
   geom_density(aes(x = post.f.k, color = "Sensitivity parameter"), show.legend = FALSE) +
   ggtitle("d) d18Oi") 
-plot(fig.S5d)
+plot(fig.S4d)
 
-fig.S5e <- fig.S5 +
+fig.S4e <- fig.S4 +
   geom_vline(xintercept = f.map.p, linewidth = 0.5) +
   geom_vline(xintercept = f.hdi025.p, linewidth = 0.5, linetype = 2) +
   geom_vline(xintercept = f.hdi975.p, linewidth = 0.5, linetype = 2) +
   geom_density(aes(x = post.f.p, color = "Sensitivity parameter"), show.legend = FALSE) +
   ggtitle("e) d18Op") 
-plot(fig.S5e)
+plot(fig.S4e)
 
-fig.S5f <- fig.S5 +
+fig.S4f <- fig.S4 +
   geom_vline(xintercept = f.map.evap, linewidth = 0.5) +
   geom_vline(xintercept = f.hdi025.evap, linewidth = 0.5, linetype = 2) +
   geom_vline(xintercept = f.hdi975.evap, linewidth = 0.5, linetype = 2) +
   geom_density(aes(x = post.f.evap, color = "Sensitivity parameter"), show.legend = FALSE) +
   ggtitle("f) d18OL") 
-plot(fig.S5f)
+plot(fig.S4f)
 
-fig.S5.panels <- fig.S5a + fig.S5b + fig.S5c + fig.S5d + fig.S5e + fig.S5f 
-plot(fig.S5.panels)
+fig.S4.panels <- fig.S4a + fig.S4b + fig.S4c + fig.S4d + fig.S4e + fig.S4f 
+plot(fig.S4.panels)
+ggsave(here("FigureS4.png"), fig.S4.panels, device = png, width = 6.5, height = 5.6, units = "in")
 
 # Density plots----
 

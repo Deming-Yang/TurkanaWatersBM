@@ -122,6 +122,10 @@ post.d18Oi <- post.lw.evp.f$BUGSoutput$sims.list$d18Oi
 post.dDi <- post.lw.evp.f$BUGSoutput$sims.list$dDi
 post.d18Op <- post.lw.evp.f$BUGSoutput$sims.list$d18Op
 post.dDp <- post.lw.evp.f$BUGSoutput$sims.list$dDp
+post.d18OL <- post.lw.evp.f$BUGSoutput$sims.list$d18OL
+post.dDL <- post.lw.evp.f$BUGSoutput$sims.list$dDL
+pre.d18OL <- post.lw.evp.f$BUGSoutput$sims.list$pre.d18OL
+pre.dDL <- post.lw.evp.f$BUGSoutput$sims.list$pre.dDL
 post.dstar18O <- post.lw.evp.f$BUGSoutput$sims.list$dstar18O[,t]
 post.dstarD <- post.lw.evp.f$BUGSoutput$sims.list$dstarD[,t]
 post.rh.int <- post.lw.evp.f$BUGSoutput$sims.list$rh[,1]
@@ -129,6 +133,7 @@ post.rhev <- post.lw.evp.f$BUGSoutput$sims.list$rh.ev
 post.intc <- post.lw.evp.f$BUGSoutput$sims.list$intc.ev
 post.sl <- post.lw.evp.f$BUGSoutput$sims.list$sl.ev
 post.f <- post.lw.evp.f$BUGSoutput$sims.list$f.ev
+
 # maximum a posteriori estimate
 sl.map <- map_estimate(post.sl)[[1]]
 # highest density interval, CI = 0.95
@@ -347,7 +352,7 @@ kable(post.lw.evp.sen18Op$BUGSoutput$summary[,8], format = "html",
 
 # model data set with slightly more evaporated water
 lw.d18O.evap <- lw.d18O + 1 
-lw.dD.evap <- (lw.dD + 1) * sl.map # plus 1 * slope
+lw.dD.evap <- lw.dD + 1 * sl.map # plus 1 * slope
 
 dat = list(mean.TC = mean.TC, sd.TC = sd.TC, 
            mean.d18Oi = mean.d18Oi, sd.d18Oi = sd.d18Oi,
@@ -420,7 +425,7 @@ mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
 #| label: figure-S4
 #| fig-cap: Posterior distributions of f
 
-fig.S5a
+fig.S4.panels
 
 ```
 
