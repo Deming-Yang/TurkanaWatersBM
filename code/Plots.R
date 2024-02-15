@@ -1,4 +1,5 @@
 # Use with Quarto notebook 
+# Packages, data, and model posteriors not included
 
 # Plot style----
 theme_set(theme(
@@ -89,7 +90,7 @@ fig.5 <- ggplot() +
         legend.background = element_rect(fill = "white", color = "black"),
         legend.title=element_blank())
 plot(fig.5)
-ggsave(here("Figure5.png"), fig.5, device = png, width = 8, height = 5.6, units = "in")
+# ggsave(here("Figure5.png"), fig.5, device = png, width = 8, height = 5.6, units = "in")
 
 # Figure 6----
 
@@ -226,43 +227,15 @@ plot(fig6.panels)
 
 # Figure S1----
 
-# cloud plot for simulated sources 
-# par(mfrow=c(1,1))
-# plot(x = lw.d18O, y = lw.dD, xlab = "d18O", ylab = "dD",
-#      xlim = c(-10,10), ylim = c(-80,60), 
-#      col= alpha("cyan4", 0.5), pch = 16,
-#      main = "Simulated water isotopes, Lake Turkana evaporation model")
-# abline(a = 10, b = 8, lwd = 2)
-# points(x = post.d18Oi, y = post.dDi, col= alpha("green2", 0.01))
-# points(x = post.d18Op, y = post.dDp, col= alpha("blue", 0.01))
-# # evaporated lake
-# points(x = post.d18Ov, y = post.dDv, col= alpha("magenta2", 0.01))
-# points(x = post.d18OA1, y = post.dDA1, col= alpha("red", 0.01))
-# # after mixing with evaporated lake
-# points(x = post.d18OA, y = post.dDA, col= alpha("red4", 0.01))
-# # there are a lot of uncertainties in the values of dstar
-# # the values seem to depend on three things: 
-# # the vapor, the input, and x, which can all be variable
-# points(x = post.dstar18O, y = post.dstarD, col= alpha("orange", 0.01))
-# abline(a = intc.map, b = sl.map, lwd = 2, col = "orange4")
-# abline(a = intc.hdi025, b = sl.hdi975, lwd = 1.5, col = "orange4", lty = 2)
-# abline(a = intc.hdi975, b = sl.hdi025, lwd = 1.5, col = "orange4", lty = 2)
-# legend(-10, 60, c("Lake water", "Inflow", "Precipitation", 
-#                   "Evap. lake water", "Limiting delta",
-#                   "Precip. Eq. air", "Air-Vapor mixture"),
-#        pch = c(16,16,16,16,16,16,16), 
-#        col = c("cyan4", "green2", "blue", "magenta2", "orange",
-#                                         "red", "red4"))
-
 fig.S1 <- ggplot(data = NULL) + 
   geom_abline(aes(slope = 8, intercept = 10, color = "GMWL")) +
-  geom_point(aes(x = post.d18Op, y = post.dDp, color = "Precipitation"), shape = ".", alpha = 0.25) +
-  geom_point(aes(x = post.d18Ov, y = post.dDv, color = "Evaporated lake"), shape = ".", alpha = 0.25) +
-  geom_point(aes(x = post.d18Oi, y = post.dDi, color = "River"), shape = ".", alpha = 0.25) +
-  geom_point(aes(x = post.d18OA1, y = post.dDA1, color = "Atmospheric vapor"), shape = ".", alpha = 0.25) +
-  geom_point(aes(x = post.d18OA, y = post.dDA, color = "Mixed vapor"), shape = ".", alpha = 0.25) +
-  geom_point(aes(x = post.dstar18O, y = post.dstarD, color = "Limiting ratio"), shape = ".", alpha = 0.25) +
-  geom_point(aes(x = lw.d18O, y = lw.dD, color = "Lake"), shape = shape.lake) +
+  geom_point(aes(x = post.d18Op, y = post.dDp, color = "Precipitation"), shape = ".", alpha = 0.2) +
+  geom_point(aes(x = post.d18Ov, y = post.dDv, color = "Evaporated lake"), shape = ".", alpha = 0.2) +
+  geom_point(aes(x = post.d18Oi, y = post.dDi, color = "River"), shape = ".", alpha = 0.2) +
+  geom_point(aes(x = post.d18OA1, y = post.dDA1, color = "Atmospheric vapor"), shape = ".", alpha = 0.2) +
+  geom_point(aes(x = post.d18OA, y = post.dDA, color = "Mixed vapor"), shape = ".", alpha = 0.2) +
+  geom_point(aes(x = post.dstar18O, y = post.dstarD, color = "Limiting ratio"), shape = ".", alpha = 0.2) +
+  geom_point(data = lakewater, aes(x = d18O, y = dD, color = "Lake"), shape = shape.lake) +
   geom_abline(aes(slope = sl.map, intercept = intc.map, color = "LEL")) +
   geom_abline(aes(slope = sl.hdi975, intercept = intc.hdi025, color = "LEL"), linetype = "dashed") +
   geom_abline(aes(slope = sl.hdi025, intercept = intc.hdi975, color = "LEL"), linetype = "dashed") +
@@ -293,7 +266,7 @@ fig.S1 <- ggplot(data = NULL) +
         legend.key.width = unit(0, "cm"),
         legend.background = element_rect(fill = "white", color = "black"),
         legend.title=element_blank())
-# plot(fig.S1)
+plot(fig.S1)
 # ggsave(here("FigureS1.png"), fig.S1, device = png, width = 8, height = 6, units = "in")
 
 # Figure S4----
@@ -311,6 +284,7 @@ fig.S4 <- ggplot(data = NULL) +
         linetype = c(rep("solid", 2)),
         shape = c(rep(NA, 2)),
         linewidth = 0.5))) +
+  theme(panel.grid = element_blank()) +
   xlab("f.ev") +
   ylab(NULL)
 plot(fig.S4)
@@ -373,15 +347,136 @@ plot(fig.S4f)
 
 fig.S4.panels <- fig.S4a + fig.S4b + fig.S4c + fig.S4d + fig.S4e + fig.S4f 
 plot(fig.S4.panels)
-ggsave(here("FigureS4.png"), fig.S4.panels, device = png, width = 6.5, height = 5.6, units = "in")
+# ggsave(here("FigureS4.png"), fig.S4.panels, device = png, width = 6.5, height = 5.6, units = "in")
 
-# Density plots----
+# Base plots----
+
+# cloud plot for simulated sources 
+# par(mfrow=c(1,1))
+# plot(x = lw.d18O, y = lw.dD, xlab = "d18O", ylab = "dD",
+#      xlim = c(-10,10), ylim = c(-80,60), 
+#      col= alpha("cyan4", 0.5), pch = 16,
+#      main = "Simulated water isotopes, Lake Turkana evaporation model")
+# abline(a = 10, b = 8, lwd = 2)
+# points(x = post.d18Oi, y = post.dDi, col= alpha("green2", 0.01))
+# points(x = post.d18Op, y = post.dDp, col= alpha("blue", 0.01))
+# # evaporated lake
+# points(x = post.d18Ov, y = post.dDv, col= alpha("magenta2", 0.01))
+# points(x = post.d18OA1, y = post.dDA1, col= alpha("red", 0.01))
+# # after mixing with evaporated lake
+# points(x = post.d18OA, y = post.dDA, col= alpha("red4", 0.01))
+# # there are a lot of uncertainties in the values of dstar
+# # the values seem to depend on three things: 
+# # the vapor, the input, and x, which can all be variable
+# points(x = post.dstar18O, y = post.dstarD, col= alpha("orange", 0.01))
+# abline(a = intc.map, b = sl.map, lwd = 2, col = "orange4")
+# abline(a = intc.hdi025, b = sl.hdi975, lwd = 1.5, col = "orange4", lty = 2)
+# abline(a = intc.hdi975, b = sl.hdi025, lwd = 1.5, col = "orange4", lty = 2)
+# legend(-10, 60, c("Lake water", "Inflow", "Precipitation", 
+#                   "Evap. lake water", "Limiting delta",
+#                   "Precip. Eq. air", "Air-Vapor mixture"),
+#        pch = c(16,16,16,16,16,16,16), 
+#        col = c("cyan4", "green2", "blue", "magenta2", "orange",
+#                                         "red", "red4"))
 
 # density plot for the posterior of f
-plot(density(post.f), xlim = c(0, 1), xlab = "f", ylab = "Density",
-     main = "Posterior distribution of f.ev")
-abline(v = f.map, lwd = 2)
-abline(v = f.hdi025, lwd = 1.5 , lty = 2)
-abline(v = f.hdi975, lwd = 1.5 , lty = 2)
+# plot(density(post.f), xlim = c(0, 1), xlab = "f", ylab = "Density",
+#      main = "Posterior distribution of f.ev")
+# abline(v = f.map, lwd = 2)
+# abline(v = f.hdi025, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975, lwd = 1.5 , lty = 2)
 
+# parameter Lake Surface temperature or TC
+# par(mfrow=c(2,4))
+# x<-seq(from=24,to=32,length.out=1000)
+# plot(x, dnorm(x, mean.TC, sd.TC), type = "l", col = "blue",
+#      main="Prior vs Posterior, LST", xlab = "LST", ylab = "Density")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$TC), col = "red")
+# 
+# # parameter relative humidity, rh
+# x<-seq(from=0.2,to=1,length.out=1000)
+# plot(x, dbeta(x, 16, 12), type = "l", col = "blue", ylim = c(0, 13),
+#      main="Prior vs Posterior, rh.int", xlab = "rh", ylab = "Density")
+# lines(density(post.rh.int), col = "red")
+# legend(0.2,12,c("Prior","Posterior"),lty = c(1,1), col = c("blue", "red"))
+# 
+# # plot relative humidity from before mixing to after mixing
+# plot(density(post.rh.int), xlim = c(0.6, 0.95), xlab = "rh", ylab = "Density",
+#      main = "Posteriors of rh.int and rh.ev", col = "cyan4")
+# lines(density(post.rhev), col = "blue4")
+# legend(0.6,12,c("rh.int","rh.ev"),lty = c(1,1), col = c("cyan4", "blue4"))
+# 
+# # parameter evaporative seasonality, k
+# x<-seq(from=0.7,to=1,length.out=1000)
+# plot(x, dbeta(x, 20, 1), type = "l", col = "blue", ylim = c(0, 30),
+#      main="Prior vs Posterior, k", xlab = "k", ylab = "Density")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$k), col = "red")
+# 
+# # parameter inflow d18O, d18Oi
+# x<-seq(from=-5,to=2,length.out=1000)
+# plot(x, dnorm(x, mean.d18Oi, sd.d18Oi), type = "l", col = "blue", ylim = c(0, 0.5),
+#      xlim=c(-5,2),main="Prior vs Posterior, d18Oi", xlab = "d18Oi", ylab = "Density")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$d18Oi), col = "red")
+# 
+# # parameter precipitation d18O, d18Op
+# x<-seq(from=-2,to=4,length.out=1000)
+# plot(x, dnorm(x, mean.d18Op, sd.d18Op), type = "l", col = "blue", ylim = c(0, 0.7),
+#      main="Prior vs Posterior, d18Op", xlab = "d18Op", ylab = "Density")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$d18Op), col = "red")
+# 
+# # parameter precipitation dD, dDp
+# x<-seq(from=-5,to=45,length.out=1000)
+# plot(x, dnorm(x, mean.dDp, sd.dDp), type = "l", col = "blue", ylim = c(0, 0.12),
+#      main="Prior vs Posterior, dDp", xlab = "dDp", ylab = "Density")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$dDp), col = "red")
 
+# summary of posterior distributions of f 
+# par(mfrow=c(2,3))
+# # density plot for the posterior of f
+# plot(density(post.f.TC), xlim = c(0, 1), ylim = c(0,7), col = "red",
+#      main = "Posterior Sens-LST", xlab = "f.ev")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+# abline(v = f.map.TC, lwd = 2)
+# abline(v = f.hdi025.TC, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975.TC, lwd = 1.5 , lty = 2)
+# legend(0.5,7,c("Model","Sens-param"),lty = c(1,1), col = c("blue", "red"))
+# 
+# # density plot for the posterior of f
+# plot(density(post.f.rh), xlim = c(0, 1), ylim = c(0,7), col = "red",
+#      main = "Posterior Sens-rh", xlab = "f.ev")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+# abline(v = f.map.rh, lwd = 2)
+# abline(v = f.hdi025.rh, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975.rh, lwd = 1.5 , lty = 2)
+# 
+# # density plot for the posterior of f
+# plot(density(post.f.k), xlim = c(0, 1), ylim = c(0,7), col = "red",
+#      main = "Posterior Sens-k", xlab = "f.ev")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+# abline(v = f.map.k, lwd = 2)
+# abline(v = f.hdi025.k, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975.k, lwd = 1.5 , lty = 2)
+# 
+# # density plot for the posterior of f
+# plot(density(post.f.i), xlim = c(0, 1), ylim = c(0,7), col = "red",
+#      main = "Posterior Sens-inflow", xlab = "f.ev")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+# abline(v = f.map.i, lwd = 2)
+# abline(v = f.hdi025.i, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975.i, lwd = 1.5 , lty = 2)
+# 
+# # density plot for the posterior of f
+# plot(density(post.f.p), xlim = c(0, 1), ylim = c(0,7), col = "red",
+#      main = "Posterior Sens-precip", xlab = "f.ev")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+# abline(v = f.map.p, lwd = 2)
+# abline(v = f.hdi025.p, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975.p, lwd = 1.5 , lty = 2)
+# 
+# # density plot for the posterior of f
+# plot(density(post.f.evap), xlim = c(0, 1), ylim = c(0,7), col = "red",
+#      main = "Posterior Sens-lake", xlab = "f.ev")
+# lines(density(post.lw.evp.f$BUGSoutput$sims.list$f.ev), col = "blue")
+# abline(v = f.map.evap, lwd = 2)
+# abline(v = f.hdi025.evap, lwd = 1.5 , lty = 2)
+# abline(v = f.hdi975.evap, lwd = 1.5 , lty = 2)

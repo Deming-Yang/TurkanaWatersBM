@@ -18,7 +18,7 @@ execute:
 
 ## Software requirements
 
-The code was developed in R (ver. 4.3.2) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook.
+The code was developed in R (v. 4.3.2) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook.
 
 ```{r}
 #| label: setup
@@ -122,10 +122,8 @@ post.d18Oi <- post.lw.evp.f$BUGSoutput$sims.list$d18Oi
 post.dDi <- post.lw.evp.f$BUGSoutput$sims.list$dDi
 post.d18Op <- post.lw.evp.f$BUGSoutput$sims.list$d18Op
 post.dDp <- post.lw.evp.f$BUGSoutput$sims.list$dDp
-post.d18OL <- post.lw.evp.f$BUGSoutput$sims.list$d18OL
-post.dDL <- post.lw.evp.f$BUGSoutput$sims.list$dDL
-pre.d18OL <- post.lw.evp.f$BUGSoutput$sims.list$pre.d18OL
-pre.dDL <- post.lw.evp.f$BUGSoutput$sims.list$pre.dDL
+post.d18OL.ev <- post.lw.evp.f$BUGSoutput$sims.list$d18OL
+post.dDL.ev <- post.lw.evp.f$BUGSoutput$sims.list$dDL
 post.dstar18O <- post.lw.evp.f$BUGSoutput$sims.list$dstar18O[,t]
 post.dstarD <- post.lw.evp.f$BUGSoutput$sims.list$dstarD[,t]
 post.rh.int <- post.lw.evp.f$BUGSoutput$sims.list$rh[,1]
@@ -172,6 +170,7 @@ Each code chunk below will run an MCMC simulation.
 
 ```{r}
 #| label: LST-sens
+#| include: false
 
 # uniformly distributed Temp prior
 range.TC <- c(24, 32)
@@ -197,7 +196,8 @@ f.hdi025.TC <- hdi(post.f.TC, ci = 0.95)[[2]]
 f.hdi975.TC <- hdi(post.f.TC, ci = 0.95)[[3]]
 
 kable(post.lw.evp.senTC$BUGSoutput$summary[,8], format = "html",
-      caption = "LST sensitivity rhat") |>
+      caption = "LST sensitivity rhat",
+      position = "right") |>
   scroll_box(width = "30%", height = "300px") |>
   kable_styling(bootstrap_options = "condensed", "hover",
                 font_size = 10, 
@@ -207,6 +207,7 @@ kable(post.lw.evp.senTC$BUGSoutput$summary[,8], format = "html",
 
 ```{r}
 #| label: rh-sens
+#| include: false
 
 # uniformly distributed rh prior
 range.rh <- c(0.3, 0.95)
@@ -232,7 +233,8 @@ f.hdi025.rh <- hdi(post.f.rh, ci = 0.95)[[2]]
 f.hdi975.rh <- hdi(post.f.rh, ci = 0.95)[[3]]
 
 kable(post.lw.evp.senrh$BUGSoutput$summary[,8], format = "html",
-      caption = "rh sensitivity rhat") |>
+      caption = "rh sensitivity rhat",
+      position = "left") |>
   scroll_box(width = "30%", height = "300px") |>
   kable_styling(bootstrap_options = "condensed", "hover",
                 font_size = 10, 
@@ -242,6 +244,7 @@ kable(post.lw.evp.senrh$BUGSoutput$summary[,8], format = "html",
 
 ```{r}
 #| label: k-sens
+#| include: false
 
 # uniformly distributed k prior
 range.k <- c(0.5, 1)
@@ -277,6 +280,7 @@ kable(post.lw.evp.senk$BUGSoutput$summary[,8], format = "html",
 
 ```{r}
 #| label: d18Oi-sens
+#| include: false
 
 # uninformative inflow isotopes 
 range.d18Oi <- c(-5, 3) 
@@ -313,6 +317,7 @@ kable(post.lw.evp.sen18Oi$BUGSoutput$summary[,8], format = "html",
 
 ```{r}
 #| label: d18Op-sens
+#| include: false
 
 # uninformative precip isotopes 
 range.d18Op <- c(-4, 4) 
@@ -349,6 +354,7 @@ kable(post.lw.evp.sen18Op$BUGSoutput$summary[,8], format = "html",
 
 ```{r}
 #| label: d18OL-sens
+#| include: false
 
 # model data set with slightly more evaporated water
 lw.d18O.evap <- lw.d18O + 1 
@@ -388,7 +394,12 @@ kable(post.lw.evp.sen.evap$BUGSoutput$summary[,8], format = "html",
 #| cache: false
 #| include: false
 
-source(here("code/2 Plots final.R"))
+# overwrite lake water values 
+# these were changed in the chunk above for testing 
+lw.dD <- lakewater$dD
+lw.d18O <- lakewater$d18O
+
+source(here("code/Plots.R"))
 ```
 
 ## Posteriors
@@ -426,7 +437,6 @@ mcmc_hex(as.mcmc(post.lw.evp.f), pars = c("f.ev", "rh.ev")) +
 #| fig-cap: Posterior distributions of f
 
 fig.S4.panels
-
 ```
 
 ```{r}
@@ -454,7 +464,7 @@ denplot(as.mcmc(post.lw.evp.senrh),
 ```
 
 ```{r}
-#| label-: figure-S7
+#| label: figure-S7
 #| fig-cap: "Posterior distributions for k sensitivity test"
 
 denplot(as.mcmc(post.lw.evp.senk), 
@@ -466,7 +476,7 @@ denplot(as.mcmc(post.lw.evp.senk),
 ```
 
 ```{r}
-#| label-: figure-S8
+#| label: figure-S8
 #| fig-cap: "Posterior distributions for d18Oi sensitivity test"
 
 denplot(as.mcmc(post.lw.evp.sen18Oi), 
@@ -478,7 +488,7 @@ denplot(as.mcmc(post.lw.evp.sen18Oi),
 ```
 
 ```{r}
-#| label-: figure-S9
+#| label: figure-S9
 #| fig-cap: "Posterior distributions for d18Op sensitivity test"
 
 denplot(as.mcmc(post.lw.evp.sen18Op), 
@@ -490,9 +500,10 @@ denplot(as.mcmc(post.lw.evp.sen18Op),
 ```
 
 ```{r}
-#| label-: figure-S10
+#| label: figure-S10
 #| fig-cap: "Posterior distributions for d18OL sensitivity test"
 
+#edit 
 denplot(as.mcmc(post.lw.evp.sen.evap), 
         parms =c("TC", "rh.ev","dDi","d18Oi","k", 
                  "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 

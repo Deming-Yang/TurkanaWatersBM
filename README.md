@@ -1,9 +1,11 @@
 # TurkanaWatersBM
-Bayesian approach for modeling Lake Turkana water isotopes
+# Bayesian approach for modeling Lake Turkana water isotopes
 
 ## Software requirements
-The code was developed in R (ver. 4.3.1) calling the standalone JAGS (Just Another Gibbs Sampler) program, which is required before the code can be run. The JAGS program can be downloaded via [this link](https://sourceforge.net/projects/mcmc-jags/). Please make sure to download the version that is appropriate for your operating system.
 
-To call JAGS from RStudio, the R packages "R2jags" is also required.
+The code was developed in R (v. 4.3.2) calling JAGS (Just Another Gibbs Sampler), a program for Bayesian hierarchical models. Please install JAGS before using this notebook.
 
-Other R packages specified in the file headers help to visualize data.
+## Usage
+
+The Quarto notebook loads all packages, runs all MCMC simulations, and produces several plots. Model code and sensitivity tests are provided as JAGS scripts in R. 
+
