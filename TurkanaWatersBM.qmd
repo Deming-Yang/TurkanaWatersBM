@@ -1,6 +1,6 @@
 ---
 title: "Bayesian approach for modeling Lake Turkana water isotopes"
-author: "Deming Yang and Mae Saslaw"
+author: "Deming Yang, Mae Saslaw, and Gregory Henkes"
 author-title: "Authors"
 bibliography: references/references.bib
 csl: references/american-geophysical-union.csl 
