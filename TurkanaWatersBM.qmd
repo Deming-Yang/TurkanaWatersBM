@@ -18,7 +18,7 @@ execute:
 
 ## Software requirements
 
-The code was developed in (RStudio)[https://posit.co/download/rstudio-desktop/] using (R (v. 4.3.2))[https://www.r-project.org/] calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook. 
+The code was developed in [RStudio](https://posit.co/download/rstudio-desktop/) using [R (v. 4.3.2)](https://www.r-project.org/) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook. 
 
 [Pacman](https://cran.r-project.org/web/packages/pacman/index.html) is required to load the necessary packages in the setup chunk below, or you may load each listed package separately using `library()`. 
 

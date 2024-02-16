@@ -3,7 +3,7 @@
 
 ## Software requirements
 
-The code was developed in (RStudio)[https://posit.co/download/rstudio-desktop/] using (R (v. 4.3.2))[https://www.r-project.org/] calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install all of the above before using this notebook. 
+The code was developed in [RStudio](https://posit.co/download/rstudio-desktop/) using [R (v. 4.3.2)](https://www.r-project.org/) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install all of the above before using this notebook. 
 
 ## Usage
 
