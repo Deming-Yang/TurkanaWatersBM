@@ -18,7 +18,9 @@ execute:
 
 ## Software requirements
 
-The code was developed in R (v. 4.3.2) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook.
+The code was developed in (RStudio)[https://posit.co/download/rstudio-desktop/] using (R (v. 4.3.2))[https://www.r-project.org/] calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook. 
+
+[Pacman](https://cran.r-project.org/web/packages/pacman/index.html) is required to load the necessary packages in the setup chunk below, or you may load each listed package separately using `library()`. 
 
 ```{r}
 #| label: setup
@@ -503,7 +505,6 @@ denplot(as.mcmc(post.lw.evp.sen18Op),
 #| label: figure-S10
 #| fig-cap: "Posterior distributions for d18OL sensitivity test"
 
-#edit 
 denplot(as.mcmc(post.lw.evp.sen.evap), 
         parms =c("TC", "rh.ev","dDi","d18Oi","k", 
                  "dDA.ev","d18OA.ev", "dDv.ev","d18Ov.ev", 
