@@ -18,9 +18,9 @@ execute:
 
 ## Software requirements
 
-The code was developed in [RStudio](https://posit.co/download/rstudio-desktop/) using [R (v. 4.3.2)](https://www.r-project.org/) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook. 
+The code was developed in [RStudio](https://posit.co/download/rstudio-desktop/) using [R (v. 4.3.2)](https://www.r-project.org/) calling [JAGS (Just Another Gibbs Sampler)](https://sourceforge.net/projects/mcmc-jags/), a program for Bayesian hierarchical models. Please install JAGS before using this notebook.
 
-[Pacman](https://cran.r-project.org/web/packages/pacman/index.html) is required to load the necessary packages in the setup chunk below, or you may load each listed package separately using `library()`. 
+[Pacman](https://cran.r-project.org/web/packages/pacman/index.html) is required to load the necessary packages in the setup chunk below, or you may load each listed package separately using `library()`.
 
 ```{r}
 #| label: setup
@@ -135,12 +135,12 @@ post.sl <- post.lw.evp.f$BUGSoutput$sims.list$sl.ev
 post.f <- post.lw.evp.f$BUGSoutput$sims.list$f.ev
 
 # maximum a posteriori estimate
-sl.map <- map_estimate(post.sl)[[1]]
+sl.map <- map_estimate(post.sl)[[2]]
 # highest density interval, CI = 0.95
 sl.hdi025 <- hdi(post.sl, ci = 0.95)[[2]]
 sl.hdi975 <- hdi(post.sl, ci = 0.95)[[3]]
 # maximum a posteriori estimate
-intc.map <- map_estimate(post.intc)[[1]]
+intc.map <- map_estimate(post.intc)[[2]]
 # highest density interval, CI = 0.95
 intc.hdi025 <- hdi(post.intc, ci = 0.95)[[2]]
 intc.hdi975 <- hdi(post.intc, ci = 0.95)[[3]]
